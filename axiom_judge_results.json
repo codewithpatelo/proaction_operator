@@ -1,0 +1,79 @@
+{
+  "A1-A3 (Kernel)": {
+    "axiom": "A1\u2013A3 (Kernel): Autonomy, Impulse, and Quality Gate: internal deficit \u03b4_i drives action probability p_i(t) = \u03c3(D(\u03b4_i(t))), reduced by action quality g.",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 4,
+      "NON_REDUNDANCY": 5,
+      "BIOLOGICAL_GROUNDING": 4,
+      "FALSIFIABILITY": 5
+    },
+    "rationale": "Coherent drive-to-action mapping akin to homeostatic/allostatic control and active inference policy selection. Predicts monotonic p_i(\u03b4_i) and performance modulation by quality gate. Kernel is essential and non-derivable from later axioms.",
+    "concerns": "Clarify D, g, and sign conventions; how quality reduces probability; multi-action coupling; stochasticity source."
+  },
+  "A4 (Saliency as gate)": {
+    "axiom": "A4 (Saliency as gate): Not every observation enters the context. An attention operator A selects \u00f5_t = A(o_t, I_t, D_t, M_t; x_{A,t}).",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 5,
+      "NON_REDUNDANCY": 4,
+      "BIOLOGICAL_GROUNDING": 4,
+      "FALSIFIABILITY": 4
+    },
+    "rationale": "Clear, non-contradictory gating proposal integrating exteroceptive, interoceptive, drive, and memory signals. Adds a distinct selection mechanism beyond the kernel and A5\u2013A9. Biologically consonant with salience network, thalamic gating, and predictive-coding precision control. Falsifiable by ablations/testing whether I_t/D_t/M_t alter token/context selection and downstream behavior. Minor redundancy with A6 and unclear 'context' definition temper scores.",
+    "concerns": "Define 'context' and the type of \u00f5_t; clarify boundary with P (is A before/after perceptual feature extraction?); justify explicit M_t input given A6\u2019s ubiquitous prior; specify learning/dynamics of x_{A,t} and timescale links to SAM/HPA; outline quantitative falsification tests (e.g., precision-weight changes predicting attention allocation)."
+  },
+  "A5 (Interoception as parallel input)": {
+    "axiom": "A5 (Interoception as parallel input): A body signal I_t feeds into E and A without passing through P.",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 4,
+      "NON_REDUNDANCY": 3,
+      "BIOLOGICAL_GROUNDING": 3,
+      "FALSIFIABILITY": 4
+    },
+    "rationale": "Direct interoceptive inputs to attention and emotion align with salience network and interoceptive inference (insula/ACC, amygdala). Adds a distinct pathway beyond A4. However, the 'without passing through P' claim is too absolute\u2014interoception has perceptual hierarchies\u2014and it omits routes to cognition/hormonal control. Testable via ablation/lesion studies in agents.",
+    "concerns": "Clarify whether P includes interoceptive perception; justify exclusion of C/H pathways; specify timescale coupling with H; integrate precision-weighted gating (A4/A8) for I_t; define measurable I_t proxies for LLM-agents."
+  },
+  "A6 (Memory as ubiquitous prior)": {
+    "axiom": "A6 (Memory as ubiquitous prior): A state M_t biases all subsystems and updates post-action.",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 4,
+      "NON_REDUNDANCY": 3,
+      "BIOLOGICAL_GROUNDING": 3,
+      "FALSIFIABILITY": 3
+    },
+    "rationale": "Coherent and matches a Bayesian prior view; extends A4 by making memory global and updating post-action. Grounded in predictive coding/allostasis/constructed-emotion where memory shapes perception, interoception, valuation; but 'biases all subsystems' is strong. Falsifiable via ablations measuring subsystem sensitivity to M_t and post-action updates in LLM-agents.",
+    "concerns": "Over-broad universal claim; specify which parameters in each subsystem are biased (e.g., means vs precisions), timescales, and update rule. Risk of redundancy with D_t set-points and saliency gate; identifiability issues. Clarify whether hormonal axis H is directly memory-modulated and how to operationalize falsification across all subsystems."
+  },
+  "A7 (Drives as set-point generators)": {
+    "axiom": "A7 (Drives as set-point generators): Set-points are not constants: x*_t = D_t.",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 3,
+      "NON_REDUNDANCY": 5,
+      "BIOLOGICAL_GROUNDING": 4,
+      "FALSIFIABILITY": 4
+    },
+    "rationale": "Expresses allostasis (variable defended values) distinct from other axioms. But x*_t = D_t risks unit mismatch and circularity with deficits. Biology supports modulatory shifts via SAM/HPA and predictive coding, not literal equality. Falsifiable by showing drive manipulations shift internal targets independently of immediate action probability.",
+    "concerns": "Type/units unclear (are D_t and x* commensurate?); circularity if \u03b4 uses x* while D_t depends on \u03b4; missing update law and timescale; potential instability. Prefer x*_t = f(D_t, M_t, I_t) with explicit typing and convergence/stability conditions."
+  },
+  "A8 (Fast/slow parallelism with arbitrator)": {
+    "axiom": "A8 (Fast/slow parallelism with arbitrator): Two routes produce action candidates c_fast, c_slow; an arbitrator assigns precision weights \u03c0_fast, \u03c0_slow.",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 4,
+      "NON_REDUNDANCY": 5,
+      "BIOLOGICAL_GROUNDING": 4,
+      "FALSIFIABILITY": 4
+    },
+    "rationale": "Clear, non-contradictory dual-route arbitration aligns with dual-process accounts, cortico-basal ganglia arbitration, and predictive-coding precision. It adds structure absent in A1-A7 and is testable via volatility manipulations. Weaknesses: 'precision' and its estimation/normalization are unspecified; mapping to hormonal timescales is asserted but not mechanistically tied to the arbitrator.",
+    "concerns": "Define how \u03c0_fast, \u03c0_slow are computed, bounded, and learned; specify whether they sum to 1 and depend on uncertainty/volatility; clarify how arbitration interfaces with A1-A3 action probability and g; justify biological mapping of fast (SAM) vs slow (HPA) routes; consider more than two routes or hierarchical arbitration."
+  },
+  "A9 (Recursive closure)": {
+    "axiom": "A9 (Recursive closure): \u0393 is self-applicable: \u0393(\u0393(\u00b7)) preserves type signature, enabling VSM recursion.",
+    "scores": {
+      "INTERNAL_CONSISTENCY": 3,
+      "NON_REDUNDANCY": 5,
+      "BIOLOGICAL_GROUNDING": 3,
+      "FALSIFIABILITY": 2
+    },
+    "rationale": "Clear statement of closure/recursion distinct from A1\u2013A8. Coheres with VSM and hierarchical predictive coding\u2019s self-similar control motifs, but biological evidence for exact self-application is thin. Type-preservation is asserted, not derived; may conflict with heterogeneous timescales/interfaces (SAM vs HPA). Falsifiability is weak: mostly architectural; can be probed only by agent ablations/performance under added recursion.",
+    "concerns": "Ill-defined typing of \u0393\u2019s inputs/outputs; unclear shared state across A,P,H,E,N,C. Risk of regress/oscillation without contraction or stability constraints. Precision arbitration across levels unspecified; potential double-counting of memory/drives. Biological mapping of exact self-application across SAM/HPA is unmotivated. Specify interfaces, termination/stopping rules, and measurable invariants."
+  }
+}

@@ -93,21 +93,13 @@ llm_healthcheck.py
 mini_benchmark.py
 monitor.py
 hypothesis_check.py
-verify_axioms_graph.py
-verify_axioms_judge.py
-verify_axioms_types.py
-verify_axioms_z3.py
-verify_mpmath.py
-verify_symbolic.py
-verify_z3.py
+
+# NOTE: verify_*.py are NOT ignored — they are the math validation suite
+# referenced in the paper (SymPy, Z3, mpmath). Reviewers can run them.
 
 # Internal data/results (not for reviewers)
-axiom_judge_results.json
-axiom_soundness_report.md
-bootstrap_results.json
 hypothesis_results.txt
 simulation.json
-soundness_report.md
 
 # Internal directories
 logs/

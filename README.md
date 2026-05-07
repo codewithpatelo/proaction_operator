@@ -88,6 +88,18 @@ ecuacion_proaccion/
 ├── sensitivity_analysis.py   # Parameter sensitivity (Appendix B / Figure 5)
 ├── health_check.py           # Dataset integrity audit
 │
+├── verify_symbolic.py        # SymPy: symbolic master-equation derivation
+├── verify_mpmath.py          # mpmath: arbitrary-precision numerical checks
+├── verify_z3.py              # Z3 SMT: counterexample search on update-rule properties
+├── verify_axioms_z3.py       # Z3 SMT: checks axioms A1–A9 against implementation
+├── verify_axioms_graph.py    # Graph-theoretic axiom consistency check
+├── verify_axioms_types.py    # Static type checking of Γ subsystem signatures
+├── verify_axioms_judge.py    # LLM-assisted axiom plausibility review
+│
+├── axiom_soundness_report.md # Output of verify_axioms_*.py suite
+├── soundness_report.md       # Summary soundness report (all checks)
+├── bootstrap_results.json    # Output of analyze_bootstrap.py (CIs in paper Table 3)
+│
 ├── checkpoints/
 │   └── cells.json            # Completed cell index (checkpoint store)
 └── figures/                  # Generated figures (fig1–fig5)
@@ -214,6 +226,50 @@ Concurrency: 8 cells in-flight simultaneously. Retries: 4 exponential backoff on
 
 ---
 
+## Mathematical Verification
+
+The paper claims computational sanity checks on the master equation (Eq. 2) using four independent tools. All verification scripts are in the repository root and can be run without API keys.
+
+### Verification suite
+
+| Script | Tool | What it checks |
+|---|---|---|
+| `verify_symbolic.py` | SymPy | Symbolic derivation of the master equation; confirms closed-form update rule is equivalent to step-by-step algebra |
+| `verify_mpmath.py` | mpmath (arbitrary precision) | Numerically verifies set-point convergence and half-life under 100-digit arithmetic; rules out floating-point artifacts |
+| `verify_z3.py` | Z3 SMT solver | Searches for counterexamples to the update-rule monotonicity and boundedness properties |
+| `verify_axioms_z3.py` | Z3 SMT | Checks each axiom A1–A9 against the implementation; verifies no axiom is vacuously satisfied |
+| `verify_axioms_graph.py` | NetworkX | Graph-theoretic check: coupling matrix W is consistent with the directed dependency graph implied by the axioms |
+| `verify_axioms_types.py` | Python typing | Static type check on subsystem function signatures (ensures composability) |
+| `verify_axioms_judge.py` | LLM review | Structured LLM review of each axiom's plausibility; output in `axiom_judge_results.json` |
+
+### Running the verification suite
+
+```bash
+# Free — no API keys required (except verify_axioms_judge.py)
+python verify_symbolic.py       # SymPy derivation
+python verify_mpmath.py         # Arbitrary-precision numerics
+python verify_z3.py             # SMT counterexample search
+python verify_axioms_z3.py      # Axiom A1–A9 Z3 check
+python verify_axioms_graph.py   # Coupling-graph consistency
+python verify_axioms_types.py   # Type signature check
+```
+
+Pre-computed outputs are in `axiom_soundness_report.md` and `soundness_report.md` for reviewers who do not wish to re-run.
+
+### Calibration
+
+Parameter values in Table 1 of the paper (`κ`, `λ`, `α`, `x*`, `τ`, `W`, `Q`) were assigned provenance categories *before* the LLM benchmark. The calibration procedure is:
+
+1. **Smoke-test calibration** (`smoke_test.py`): parameters are chosen to satisfy three non-divergence criteria in the numerical simulator: (a) `‖x_t − x*‖ < 0.15` after 10 rounds; (b) elastic return half-life `t₁/₂ = 3.2 rounds`; (c) π_fast rises from 0.35 → 0.92 under simulated threat. These criteria were set before any LLM run.
+
+2. **Held-out calibration seed**: seed 42 was used for smoke-test parameter tuning; seed 999 was the held-out validation check. Neither appears in the evaluation seeds.
+
+3. **Evaluation seeds** (`[7, 17, 99, 123, 256, 511, 1024, 2048, 4096, 8192]`): chosen as round numbers with no relationship to calibration.
+
+All calibration constants are frozen in `exp/conditions_llm.py` and in the paper Table 1. The W matrix is available in `exp/conditions_llm.py:FULL_GAMMA_W`.
+
+---
+
 ## Prompt Protocol
 
 Each round, the LLM receives a frozen prompt (version-controlled as `PROMPT_VERSION = "v1.1"`) that includes:
@@ -285,11 +341,20 @@ Full verbatim responses are logged for exact re-analysis even if API regeneratio
 |---|---|
 | Operator definition (Eq. 1–3) | Paper §3, `simulator.py` |
 | Proposition 1 proof sketch | Paper Appendix A |
-| Frozen parameter provenance | Paper Table 1 |
+| Frozen parameter provenance | Paper Table 1, `exp/conditions_llm.py` |
+| Coupling matrix W | `exp/conditions_llm.py:FULL_GAMMA_W` |
 | Ablation definitions | Paper Table 2, `exp/runner.py:apply_ablation` |
+| Evaluation seeds (10 seeds) | Paper §4, `README.md` §Seeds, `exp/runner.py` |
+| Calibration procedure & seeds | `README.md` §Calibration, `smoke_test.py` |
+| SymPy master-equation check | `verify_symbolic.py` |
+| Arbitrary-precision check | `verify_mpmath.py` |
+| Z3 SMT counterexample search | `verify_z3.py`, `verify_axioms_z3.py` |
+| Axiom A1–A9 verification | `verify_axioms_z3.py`, `axiom_soundness_report.md` |
+| Full soundness report | `soundness_report.md` |
 | Prompt template | Paper §4.3, `exp/prompts.py:FULL_GAMMA_USER_TEMPLATE` |
 | Scrambled-labels control | Paper §4.3, `exp/prompts.py:get_scrambled_prompt` |
-| Bootstrap CIs | Paper Table 3, `analyze_bootstrap.py` |
-| Pre-committed No-H criteria | Paper §5.1 |
+| Bootstrap CIs | Paper Table 3, `analyze_bootstrap.py`, `bootstrap_results.json` |
+| Pre-committed No-H criteria | Paper §5.1, `README.md` §Experiment Design |
 | Sensitivity analysis | Paper Appendix B, `sensitivity_analysis.py` |
 | Inference hyperparameters | Paper §4, `exp/budget.py`, `exp/llm_clients.py` |
+| Dataset integrity | `health_check.py`, `checkpoints/cells.json` |
