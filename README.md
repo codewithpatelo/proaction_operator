@@ -349,13 +349,15 @@ Each model is held fixed across conditions. Provider-level summaries are diagnos
 
 | Tool | Use case | Review status |
 |---|---|---|
-| GPT-5.5 | Readability improvements, text refinement | Human reviewed |
-| Claude Opus 4.7 | Code assistance, refactoring, experiment monitoring | Human reviewed |
+| GPT-5.5 + Grammarly | Readability improvements, text refinement | Human reviewed |
+| Claude Code | Code assistance, refactoring, experiment monitoring | Human reviewed |
 | Windsurf IDE + Cascade | Agentic code development, multi-file refactoring | Human reviewed |
 | DeepSeek R4 | Mathematical derivation cross-checks | Human verified |
+| Reviewer3 | Simulated peer review | Human verified |
 | Elicit | Line of research validation | Human verified |
 | Consensus | Hypothesis validation | Human verified |
 | Perplexity | Literature research on related work and prior art | Human verified |
+| FigureLabs | Figure generation and visual refinement | Human reviewed |
 
 All AI-generated content was reviewed and edited by human authors who assume full responsibility for all scientific claims, citations, experimental design, and code. No AI tool was used to generate core scientific claims without human verification.
 
@@ -407,21 +409,3 @@ Full verbatim responses are logged for exact re-analysis even if API regeneratio
 | Sensitivity analysis | Paper Appendix B, `sensitivity_analysis.py` |
 | Inference hyperparameters | Paper §4, `exp/budget.py`, `exp/llm_clients.py` |
 | Dataset integrity | `health_check.py`, `checkpoints/cells.json` |
-
----
-
-## LLMs as Authoring and Development Tools
-
-| Tool | Use case | Review status |
-|------|----------|---------------|
-| GPT-5.5 + Grammarly | Readability improvements, text refinement | Human reviewed |
-| Claude Code | Code assistance, refactoring, experiment monitoring | Human reviewed |
-| Windsurf IDE + Cascade | Agentic code development, multi-file refactoring | Human reviewed |
-| DeepSeek R4 | Mathematical derivation cross-checks | Human verified |
-| Reviewer3 | Simulated peer review | Human verified |
-| Elicit | Line of research validation | Human verified |
-| Consensus | Hypothesis validation | Human verified |
-| Perplexity | Literature research on related work and prior art | Human verified |
-| FigureLabs | Figure generation and visual refinement | Human reviewed |
-
-All AI-generated content was reviewed and edited by the authors, who assume full responsibility for all claims.
