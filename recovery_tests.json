@@ -1,0 +1,51 @@
+{
+  "method": "Mann-Whitney U (two-sided), Cliff's delta effect size with Romano et al. 2006 thresholds",
+  "observable": "coop_recovery_delay (rounds post round-10 perturbation to half-recovery)",
+  "comparisons": [
+    {
+      "comparison": "Full-Gamma vs No-H",
+      "n_a": 73,
+      "n_b": 66,
+      "median_a": 7.0,
+      "median_b": 7.0,
+      "mean_a": 7.136986301369863,
+      "mean_b": 7.378787878787879,
+      "u_statistic": 2321.5,
+      "p_two_sided": 0.7127881315753228,
+      "p_a_less_than_b": 0.3563940657876614,
+      "p_a_greater_than_b": 0.6451821244861082,
+      "cliffs_delta": -0.036322125363221255,
+      "delta_magnitude": "negligible"
+    },
+    {
+      "comparison": "Full-Gamma vs No-N",
+      "n_a": 73,
+      "n_b": 62,
+      "median_a": 7.0,
+      "median_b": 6.0,
+      "mean_a": 7.136986301369863,
+      "mean_b": 6.419354838709677,
+      "u_statistic": 2539.5,
+      "p_two_sided": 0.22137449738396198,
+      "p_a_less_than_b": 0.8901473495045976,
+      "p_a_greater_than_b": 0.11068724869198099,
+      "cliffs_delta": 0.12218294299602298,
+      "delta_magnitude": "negligible"
+    },
+    {
+      "comparison": "Full-Gamma vs ReAct",
+      "n_a": 73,
+      "n_b": 62,
+      "median_a": 7.0,
+      "median_b": 6.0,
+      "mean_a": 7.136986301369863,
+      "mean_b": 6.838709677419355,
+      "u_statistic": 2384.5,
+      "p_two_sided": 0.5918504099109787,
+      "p_a_less_than_b": 0.7056040401051508,
+      "p_a_greater_than_b": 0.29592520495548935,
+      "cliffs_delta": 0.05368979231109147,
+      "delta_magnitude": "negligible"
+    }
+  ]
+}

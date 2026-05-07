@@ -1,0 +1,49 @@
+{
+  "method": "paired bootstrap (10k resamples), one-sided test on \u0394(opponent range), Holm-Bonferroni across 3 comparisons",
+  "observable": "opponent range = max(coop_rate over {TFT, GTFT, Grim, Random}) - min",
+  "pairing": "by (provider, seed)",
+  "results": [
+    {
+      "hypothesis": "H1",
+      "comparison": "Full-Gamma > ReAct",
+      "n_paired": 30,
+      "mean_range_a": 0.386,
+      "mean_range_b": 0.10266666666666667,
+      "delta": 0.2833333333333333,
+      "ci_95": [
+        0.23266666666666666,
+        0.3293333333333333
+      ],
+      "p_raw": 0.0,
+      "p_holm_adj": 0.0
+    },
+    {
+      "hypothesis": "H2",
+      "comparison": "Full-Gamma > Random-Gamma",
+      "n_paired": 30,
+      "mean_range_a": 0.386,
+      "mean_range_b": 0.12866666666666668,
+      "delta": 0.2573333333333333,
+      "ci_95": [
+        0.21066666666666664,
+        0.303
+      ],
+      "p_raw": 0.0,
+      "p_holm_adj": 0.0
+    },
+    {
+      "hypothesis": "H3",
+      "comparison": "Full-Gamma > Collapse-NC",
+      "n_paired": 30,
+      "mean_range_a": 0.386,
+      "mean_range_b": 0.09833333333333336,
+      "delta": 0.2876666666666666,
+      "ci_95": [
+        0.24199999999999997,
+        0.3313333333333333
+      ],
+      "p_raw": 0.0,
+      "p_holm_adj": 0.0
+    }
+  ]
+}
