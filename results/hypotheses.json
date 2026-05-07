@@ -6,4 +6,19 @@
   },
   "H2 (Yerkes-Dodson)": {
     "status": "tested",
-    "h2_supported": 
+    "h2_supported": false,
+    "full_curvature_mean": 0.12436026024036019,
+    "noh_curvature_mean": 0.20218792252819673,
+    "n_full": 120,
+    "n_noh": 120
+  },
+  "H3 (Delayed Reappraisal)": {
+    "status": "tested",
+    "h3_supported": false,
+    "full_recovery_delay_mean": 7.136986301369863,
+    "noe_recovery_delay_mean": 7.584415584415584,
+    "n_full": 73,
+    "n_noe": 77,
+    "observable": "coop_recovery_delay (external, action-only)"
+  }
+}

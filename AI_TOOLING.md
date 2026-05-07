@@ -12,7 +12,7 @@ These LLMs are the **policy-execution layer** of the agents in the experimental 
 | Anthropic | `claude-haiku-4-5` | Full-Γ, ablations, ReAct agent policy |
 | DeepSeek | `deepseek-v4-flash` | Full-Γ, ablations, ReAct agent policy |
 
-**Usage Pattern**: Each model is held fixed across conditions; the experiment isolates the effect of the Γ controller, not provider-level differences. Prompts are frozen and versioned (`PROMPT_VERSION = "v1.0"`).
+**Usage Pattern**: Each model is held fixed across conditions; the experiment isolates the effect of the Γ controller, not provider-level differences. Prompts are frozen and versioned (`PROMPT_VERSION = "v1.1`).
 
 ## LLMs as Authoring Tools
 

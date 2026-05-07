@@ -216,7 +216,7 @@ def test_hypothesis_h1(results: list[dict]) -> dict[str, Any]:
     
     return {
         "status": "tested",
-        "h1_supported": p < 0.05 and diff > 1.0,  # Δ > 1.5 rounds pre-registered
+        "h1_supported": bool(p < 0.05 and diff > 1.0),  # Δ > 1.5 rounds pre-registered
         "wilcoxon_stat": stat,
         "wilcoxon_p": p,
         "mean_diff": diff,
@@ -253,7 +253,7 @@ def test_hypothesis_h2(results: list[dict]) -> dict[str, Any]:
     
     return {
         "status": "tested",
-        "h2_supported": full_mean < -0.05 and abs(noh_mean) < 0.05,
+        "h2_supported": bool(full_mean < -0.05 and abs(noh_mean) < 0.05),
         "full_curvature_mean": float(full_mean),
         "noh_curvature_mean": float(noh_mean),
         "n_full": len(full_curv),

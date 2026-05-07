@@ -1,211 +1,11 @@
 {
-  "Full-Gamma_TFT_deepseek": {
-    "condition": "Full-Gamma",
-    "opponent": "TFT",
-    "provider": "deepseek",
-    "bfi": 0.375254089023709,
-    "ci_lower": 0.3517313551851345,
-    "ci_upper": 0.4012607870080585,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_TFT_anthropic": {
-    "condition": "Full-Gamma",
-    "opponent": "TFT",
-    "provider": "anthropic",
-    "bfi": 0.36055480275683904,
-    "ci_lower": 0.32673648603595296,
-    "ci_upper": 0.39966319591099414,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_TFT_openai": {
-    "condition": "Full-Gamma",
-    "opponent": "TFT",
-    "provider": "openai",
-    "bfi": 0.4318687993503422,
-    "ci_lower": 0.3825415850528853,
-    "ci_upper": 0.4791278744010236,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_Grim_deepseek": {
-    "condition": "Full-Gamma",
-    "opponent": "Grim",
-    "provider": "deepseek",
-    "bfi": 0.4416899204413783,
-    "ci_lower": 0.39014103157531027,
-    "ci_upper": 0.47276956794519837,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_Grim_anthropic": {
-    "condition": "Full-Gamma",
-    "opponent": "Grim",
-    "provider": "anthropic",
-    "bfi": 0.4399266895723314,
-    "ci_lower": 0.394890336969467,
-    "ci_upper": 0.47276956794520164,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_Grim_openai": {
-    "condition": "Full-Gamma",
-    "opponent": "Grim",
-    "provider": "openai",
-    "bfi": 0.42267691734275165,
-    "ci_lower": 0.3855257929031658,
-    "ci_upper": 0.46340810327970855,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_Random_deepseek": {
-    "condition": "Full-Gamma",
-    "opponent": "Random",
-    "provider": "deepseek",
-    "bfi": 0.3081586602504986,
-    "ci_lower": 0.2867494239062314,
-    "ci_upper": 0.3325648059487487,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_Random_anthropic": {
-    "condition": "Full-Gamma",
-    "opponent": "Random",
-    "provider": "anthropic",
-    "bfi": 0.31441564160179464,
-    "ci_lower": 0.3008215056152345,
-    "ci_upper": 0.32734926773941536,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_Random_openai": {
-    "condition": "Full-Gamma",
-    "opponent": "Random",
-    "provider": "openai",
-    "bfi": 0.33516170902543674,
-    "ci_lower": 0.291374140062411,
-    "ci_upper": 0.3840071916811324,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_GTFT_deepseek": {
-    "condition": "Full-Gamma",
-    "opponent": "GTFT",
-    "provider": "deepseek",
-    "bfi": 0.4127899113953324,
-    "ci_lower": 0.3956083370824207,
-    "ci_upper": 0.4542606300140041,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_GTFT_anthropic": {
-    "condition": "Full-Gamma",
-    "opponent": "GTFT",
-    "provider": "anthropic",
-    "bfi": 0.39243628600499825,
-    "ci_lower": 0.3598731147249628,
-    "ci_upper": 0.43012559767858227,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "Full-Gamma_GTFT_openai": {
-    "condition": "Full-Gamma",
+  "No-H_GTFT_openai": {
+    "condition": "No-H",
     "opponent": "GTFT",
     "provider": "openai",
-    "bfi": 0.44502821032608264,
-    "ci_lower": 0.4250368944673878,
-    "ci_upper": 0.47199794364126757,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_TFT_deepseek": {
-    "condition": "No-H",
-    "opponent": "TFT",
-    "provider": "deepseek",
-    "bfi": 0.37399818788819167,
-    "ci_lower": 0.3515943820698475,
-    "ci_upper": 0.40423974221668246,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_TFT_anthropic": {
-    "condition": "No-H",
-    "opponent": "TFT",
-    "provider": "anthropic",
-    "bfi": 0.35341694409146035,
-    "ci_lower": 0.31647260139004996,
-    "ci_upper": 0.4584585049886229,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_TFT_openai": {
-    "condition": "No-H",
-    "opponent": "TFT",
-    "provider": "openai",
-    "bfi": 0.43817884839008175,
-    "ci_lower": 0.3965651145501756,
-    "ci_upper": 0.46526567608192126,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_Grim_deepseek": {
-    "condition": "No-H",
-    "opponent": "Grim",
-    "provider": "deepseek",
-    "bfi": 0.4470221287502254,
-    "ci_lower": 0.4126534342458505,
-    "ci_upper": 0.46713023678914467,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_Grim_anthropic": {
-    "condition": "No-H",
-    "opponent": "Grim",
-    "provider": "anthropic",
-    "bfi": 0.3980621299177384,
-    "ci_lower": 0.3659907641144381,
-    "ci_upper": 0.4312155574710232,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_Grim_openai": {
-    "condition": "No-H",
-    "opponent": "Grim",
-    "provider": "openai",
-    "bfi": 0.388622376649463,
-    "ci_lower": 0.33382662290920984,
-    "ci_upper": 0.43121555778314463,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_Random_deepseek": {
-    "condition": "No-H",
-    "opponent": "Random",
-    "provider": "deepseek",
-    "bfi": 0.2890524576179166,
-    "ci_lower": 0.2711326342719815,
-    "ci_upper": 0.30692694433714407,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_Random_anthropic": {
-    "condition": "No-H",
-    "opponent": "Random",
-    "provider": "anthropic",
-    "bfi": 0.2594614402875401,
-    "ci_lower": 0.23383321350501152,
-    "ci_upper": 0.29137413168135534,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-H_Random_openai": {
-    "condition": "No-H",
-    "opponent": "Random",
-    "provider": "openai",
-    "bfi": 0.35024876812249195,
-    "ci_lower": 0.3093923161506104,
-    "ci_upper": 0.39811327078956116,
+    "bfi": 0.44643460432176896,
+    "ci_lower": 0.40795486514961943,
+    "ci_upper": 0.47371881704812924,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
@@ -229,103 +29,263 @@
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-H_GTFT_openai": {
+  "No-H_Grim_openai": {
     "condition": "No-H",
+    "opponent": "Grim",
+    "provider": "openai",
+    "bfi": 0.388622376649463,
+    "ci_lower": 0.33382662290920984,
+    "ci_upper": 0.43121555778314463,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_Grim_deepseek": {
+    "condition": "No-H",
+    "opponent": "Grim",
+    "provider": "deepseek",
+    "bfi": 0.4470221287502254,
+    "ci_lower": 0.4126534342458505,
+    "ci_upper": 0.46713023678914467,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_Grim_anthropic": {
+    "condition": "No-H",
+    "opponent": "Grim",
+    "provider": "anthropic",
+    "bfi": 0.3980621299177384,
+    "ci_lower": 0.3659907641144381,
+    "ci_upper": 0.4312155574710232,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_Random_openai": {
+    "condition": "No-H",
+    "opponent": "Random",
+    "provider": "openai",
+    "bfi": 0.35024876812249195,
+    "ci_lower": 0.3093923161506104,
+    "ci_upper": 0.39811327078956116,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_Random_deepseek": {
+    "condition": "No-H",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.2890524576179166,
+    "ci_lower": 0.2711326342719815,
+    "ci_upper": 0.30692694433714407,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_Random_anthropic": {
+    "condition": "No-H",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.2594614402875401,
+    "ci_lower": 0.23383321350501152,
+    "ci_upper": 0.29137413168135534,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_TFT_openai": {
+    "condition": "No-H",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.43817884839008175,
+    "ci_lower": 0.3965651145501756,
+    "ci_upper": 0.46526567608192126,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_TFT_deepseek": {
+    "condition": "No-H",
+    "opponent": "TFT",
+    "provider": "deepseek",
+    "bfi": 0.37399818788819167,
+    "ci_lower": 0.3515943820698475,
+    "ci_upper": 0.40423974221668246,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-H_TFT_anthropic": {
+    "condition": "No-H",
+    "opponent": "TFT",
+    "provider": "anthropic",
+    "bfi": 0.35341694409146035,
+    "ci_lower": 0.31647260139004996,
+    "ci_upper": 0.4584585049886229,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Full-Gamma_GTFT_openai": {
+    "condition": "Full-Gamma",
     "opponent": "GTFT",
     "provider": "openai",
-    "bfi": 0.44643460432176896,
-    "ci_lower": 0.40795486514961943,
-    "ci_upper": 0.47371881704812924,
+    "bfi": 0.44502821032608264,
+    "ci_lower": 0.4250368944673878,
+    "ci_upper": 0.47199794364126757,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_TFT_deepseek": {
-    "condition": "No-E",
-    "opponent": "TFT",
+  "Full-Gamma_GTFT_deepseek": {
+    "condition": "Full-Gamma",
+    "opponent": "GTFT",
     "provider": "deepseek",
-    "bfi": 0.3720275134940507,
-    "ci_lower": 0.34879165992981886,
-    "ci_upper": 0.4055413654069386,
+    "bfi": 0.4127899113953324,
+    "ci_lower": 0.3956083370824207,
+    "ci_upper": 0.4542606300140041,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_TFT_anthropic": {
-    "condition": "No-E",
-    "opponent": "TFT",
+  "Full-Gamma_GTFT_anthropic": {
+    "condition": "Full-Gamma",
+    "opponent": "GTFT",
     "provider": "anthropic",
-    "bfi": 0.37954379216560674,
-    "ci_lower": 0.352991713446719,
-    "ci_upper": 0.4176775253695083,
+    "bfi": 0.39243628600499825,
+    "ci_lower": 0.3598731147249628,
+    "ci_upper": 0.43012559767858227,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_TFT_openai": {
-    "condition": "No-E",
-    "opponent": "TFT",
-    "provider": "openai",
-    "bfi": 0.43467973794694287,
-    "ci_lower": 0.3718953595856511,
-    "ci_upper": 0.4690025693357722,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-E_Grim_deepseek": {
-    "condition": "No-E",
-    "opponent": "Grim",
-    "provider": "deepseek",
-    "bfi": 0.427779595198162,
-    "ci_lower": 0.35446446586978275,
-    "ci_upper": 0.4690024997656478,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-E_Grim_anthropic": {
-    "condition": "No-E",
-    "opponent": "Grim",
-    "provider": "anthropic",
-    "bfi": 0.4193089916685464,
-    "ci_lower": 0.3839867698283671,
-    "ci_upper": 0.4452376116487371,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-E_Grim_openai": {
-    "condition": "No-E",
+  "Full-Gamma_Grim_openai": {
+    "condition": "Full-Gamma",
     "opponent": "Grim",
     "provider": "openai",
-    "bfi": 0.4470221302876186,
-    "ci_lower": 0.3901799716670487,
-    "ci_upper": 0.4746644334841142,
+    "bfi": 0.42267691734275165,
+    "ci_lower": 0.3855257929031658,
+    "ci_upper": 0.46340810327970855,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_Random_deepseek": {
-    "condition": "No-E",
-    "opponent": "Random",
+  "Full-Gamma_Grim_deepseek": {
+    "condition": "Full-Gamma",
+    "opponent": "Grim",
     "provider": "deepseek",
-    "bfi": 0.2948972765488465,
-    "ci_lower": 0.27550568556367455,
-    "ci_upper": 0.31333162931826786,
+    "bfi": 0.4416899204413783,
+    "ci_lower": 0.39014103157531027,
+    "ci_upper": 0.47276956794519837,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_Random_anthropic": {
-    "condition": "No-E",
-    "opponent": "Random",
+  "Full-Gamma_Grim_anthropic": {
+    "condition": "Full-Gamma",
+    "opponent": "Grim",
     "provider": "anthropic",
-    "bfi": 0.31188695621058166,
-    "ci_lower": 0.2878698827100632,
-    "ci_upper": 0.3424906745912216,
+    "bfi": 0.4399266895723314,
+    "ci_lower": 0.394890336969467,
+    "ci_upper": 0.47276956794520164,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_Random_openai": {
-    "condition": "No-E",
+  "Full-Gamma_Random_openai": {
+    "condition": "Full-Gamma",
     "opponent": "Random",
     "provider": "openai",
-    "bfi": 0.36170048772746893,
-    "ci_lower": 0.3259062152151015,
-    "ci_upper": 0.4037785717212532,
+    "bfi": 0.33516170902543674,
+    "ci_lower": 0.291374140062411,
+    "ci_upper": 0.3840071916811324,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Full-Gamma_Random_deepseek": {
+    "condition": "Full-Gamma",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.3081586602504986,
+    "ci_lower": 0.2867494239062314,
+    "ci_upper": 0.3325648059487487,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Full-Gamma_Random_anthropic": {
+    "condition": "Full-Gamma",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.31441564160179464,
+    "ci_lower": 0.3008215056152345,
+    "ci_upper": 0.32734926773941536,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Full-Gamma_TFT_openai": {
+    "condition": "Full-Gamma",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.4132644078103996,
+    "ci_lower": 0.3708266325040771,
+    "ci_upper": 0.44884835859680783,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Full-Gamma_TFT_deepseek": {
+    "condition": "Full-Gamma",
+    "opponent": "TFT",
+    "provider": "deepseek",
+    "bfi": 0.3843600627325414,
+    "ci_lower": 0.3662950169782896,
+    "ci_upper": 0.4093660002196438,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Full-Gamma_TFT_anthropic": {
+    "condition": "Full-Gamma",
+    "opponent": "TFT",
+    "provider": "anthropic",
+    "bfi": 0.36055480275683904,
+    "ci_lower": 0.32673648603595296,
+    "ci_upper": 0.39966319591099414,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Drive-only_GTFT_numerical": {
+    "condition": "Drive-only",
+    "opponent": "GTFT",
+    "provider": "numerical",
+    "bfi": 0.218898488428833,
+    "ci_lower": 0.20450821154032986,
+    "ci_upper": 0.23058235765563861,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Drive-only_Grim_numerical": {
+    "condition": "Drive-only",
+    "opponent": "Grim",
+    "provider": "numerical",
+    "bfi": 0.309391695979615,
+    "ci_lower": 0.2913741264959919,
+    "ci_upper": 0.32590570740325525,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Drive-only_Random_numerical": {
+    "condition": "Drive-only",
+    "opponent": "Random",
+    "provider": "numerical",
+    "bfi": 0.3885925605029662,
+    "ci_lower": 0.3448149314976699,
+    "ci_upper": 0.46836671392872353,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Drive-only_TFT_numerical": {
+    "condition": "Drive-only",
+    "opponent": "TFT",
+    "provider": "numerical",
+    "bfi": 0.27994918328304674,
+    "ci_lower": 0.26154545675568525,
+    "ci_upper": 0.29964789392282704,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_GTFT_openai": {
+    "condition": "No-E",
+    "opponent": "GTFT",
+    "provider": "openai",
+    "bfi": 0.44260191005102967,
+    "ci_lower": 0.40774355191260203,
+    "ci_upper": 0.4737160649591898,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
@@ -349,13 +309,473 @@
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-E_GTFT_openai": {
+  "No-E_Grim_openai": {
     "condition": "No-E",
+    "opponent": "Grim",
+    "provider": "openai",
+    "bfi": 0.4470221302876186,
+    "ci_lower": 0.3901799716670487,
+    "ci_upper": 0.4746644334841142,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_Grim_deepseek": {
+    "condition": "No-E",
+    "opponent": "Grim",
+    "provider": "deepseek",
+    "bfi": 0.427779595198162,
+    "ci_lower": 0.35446446586978275,
+    "ci_upper": 0.4690024997656478,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_Grim_anthropic": {
+    "condition": "No-E",
+    "opponent": "Grim",
+    "provider": "anthropic",
+    "bfi": 0.4193089916685464,
+    "ci_lower": 0.3839867698283671,
+    "ci_upper": 0.4452376116487371,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_Random_openai": {
+    "condition": "No-E",
+    "opponent": "Random",
+    "provider": "openai",
+    "bfi": 0.36170048772746893,
+    "ci_lower": 0.3259062152151015,
+    "ci_upper": 0.4037785717212532,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_Random_deepseek": {
+    "condition": "No-E",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.2948972765488465,
+    "ci_lower": 0.27550568556367455,
+    "ci_upper": 0.31333162931826786,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_Random_anthropic": {
+    "condition": "No-E",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.31188695621058166,
+    "ci_lower": 0.2878698827100632,
+    "ci_upper": 0.3424906745912216,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_TFT_openai": {
+    "condition": "No-E",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.4542322362106715,
+    "ci_lower": 0.42267828215825964,
+    "ci_upper": 0.47088227195936744,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_TFT_deepseek": {
+    "condition": "No-E",
+    "opponent": "TFT",
+    "provider": "deepseek",
+    "bfi": 0.3697159494758407,
+    "ci_lower": 0.36504298082567194,
+    "ci_upper": 0.47213664500631874,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-E_TFT_anthropic": {
+    "condition": "No-E",
+    "opponent": "TFT",
+    "provider": "anthropic",
+    "bfi": 0.37954379216560674,
+    "ci_lower": 0.352991713446719,
+    "ci_upper": 0.4176775253695083,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_GTFT_openai": {
+    "condition": "Collapse-NC",
     "opponent": "GTFT",
     "provider": "openai",
-    "bfi": 0.44260191005102967,
-    "ci_lower": 0.40774355191260203,
-    "ci_upper": 0.4737160649591898,
+    "bfi": 0.45934497754616255,
+    "ci_lower": 0.39243826211032345,
+    "ci_upper": 0.5370606921129194,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_GTFT_deepseek": {
+    "condition": "Collapse-NC",
+    "opponent": "GTFT",
+    "provider": "deepseek",
+    "bfi": 0.3936482869067899,
+    "ci_lower": 0.3729973224220314,
+    "ci_upper": 0.4192542845726774,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_GTFT_anthropic": {
+    "condition": "Collapse-NC",
+    "opponent": "GTFT",
+    "provider": "anthropic",
+    "bfi": 0.41742162295984675,
+    "ci_lower": 0.38506410418450165,
+    "ci_upper": 0.5323250985390795,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_Grim_openai": {
+    "condition": "Collapse-NC",
+    "opponent": "Grim",
+    "provider": "openai",
+    "bfi": 0.25229729732700557,
+    "ci_lower": 0.24435170732535835,
+    "ci_upper": 0.2615454570168816,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_Grim_deepseek": {
+    "condition": "Collapse-NC",
+    "opponent": "Grim",
+    "provider": "deepseek",
+    "bfi": 0.2647029202145773,
+    "ci_lower": 0.24631451359525236,
+    "ci_upper": 0.28446439791135286,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_Grim_anthropic": {
+    "condition": "Collapse-NC",
+    "opponent": "Grim",
+    "provider": "anthropic",
+    "bfi": 0.2543239875164753,
+    "ci_lower": 0.24047681992184655,
+    "ci_upper": 0.26897221926040527,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_Random_openai": {
+    "condition": "Collapse-NC",
+    "opponent": "Random",
+    "provider": "openai",
+    "bfi": 0.255343095862289,
+    "ci_lower": 0.24240456797716345,
+    "ci_upper": 0.2700504917614754,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_Random_deepseek": {
+    "condition": "Collapse-NC",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.24337612802199443,
+    "ci_lower": 0.23104398380450275,
+    "ci_upper": 0.25636651055722637,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_Random_anthropic": {
+    "condition": "Collapse-NC",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.26259380225910445,
+    "ci_lower": 0.24928781180460538,
+    "ci_upper": 0.2777339276835977,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_TFT_openai": {
+    "condition": "Collapse-NC",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.3982729727170458,
+    "ci_lower": 0.3773924904805208,
+    "ci_upper": 0.5413230224173651,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_TFT_deepseek": {
+    "condition": "Collapse-NC",
+    "opponent": "TFT",
+    "provider": "deepseek",
+    "bfi": 0.35494338578169415,
+    "ci_lower": 0.3228489891781577,
+    "ci_upper": 0.40124413802601105,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Collapse-NC_TFT_anthropic": {
+    "condition": "Collapse-NC",
+    "opponent": "TFT",
+    "provider": "anthropic",
+    "bfi": 0.38429239620891786,
+    "ci_lower": 0.3682874530647299,
+    "ci_upper": 0.41768142342101416,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "HRRL_GTFT_numerical": {
+    "condition": "HRRL",
+    "opponent": "GTFT",
+    "provider": "numerical",
+    "bfi": 0.4892574443105911,
+    "ci_lower": 0.461980607690744,
+    "ci_upper": 0.4891541693354638,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "HRRL_Grim_numerical": {
+    "condition": "HRRL",
+    "opponent": "Grim",
+    "provider": "numerical",
+    "bfi": 0.3933139305402207,
+    "ci_lower": 0.35731155293595573,
+    "ci_upper": 0.4329438740365849,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "HRRL_Random_numerical": {
+    "condition": "HRRL",
+    "opponent": "Random",
+    "provider": "numerical",
+    "bfi": 0.31313921983364373,
+    "ci_lower": 0.2902112951638697,
+    "ci_upper": 0.33931998773543803,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "HRRL_TFT_numerical": {
+    "condition": "HRRL",
+    "opponent": "TFT",
+    "provider": "numerical",
+    "bfi": 0.4597156299253957,
+    "ci_lower": 0.43642132554532936,
+    "ci_upper": 0.47656689391997886,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_GTFT_openai": {
+    "condition": "ReAct",
+    "opponent": "GTFT",
+    "provider": "openai",
+    "bfi": 0.4049977207843714,
+    "ci_lower": 0.37451883172859135,
+    "ci_upper": 0.43449457712717626,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_GTFT_deepseek": {
+    "condition": "ReAct",
+    "opponent": "GTFT",
+    "provider": "deepseek",
+    "bfi": 0.4108057544424247,
+    "ci_lower": 0.3854778542218159,
+    "ci_upper": 0.4390560663106758,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_GTFT_anthropic": {
+    "condition": "ReAct",
+    "opponent": "GTFT",
+    "provider": "anthropic",
+    "bfi": 0.4205783993651066,
+    "ci_lower": 0.41283201195570784,
+    "ci_upper": 0.515826570746718,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_Grim_openai": {
+    "condition": "ReAct",
+    "opponent": "Grim",
+    "provider": "openai",
+    "bfi": 0.2512903406890326,
+    "ci_lower": 0.24144523711601001,
+    "ci_upper": 0.2605014103696714,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_Grim_deepseek": {
+    "condition": "ReAct",
+    "opponent": "Grim",
+    "provider": "deepseek",
+    "bfi": 0.2700502633527621,
+    "ci_lower": 0.2584256879455382,
+    "ci_upper": 0.282197759371801,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_Grim_anthropic": {
+    "condition": "ReAct",
+    "opponent": "Grim",
+    "provider": "anthropic",
+    "bfi": 0.2553431479506813,
+    "ci_lower": 0.2376952340266913,
+    "ci_upper": 0.27440581821830934,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_Random_openai": {
+    "condition": "ReAct",
+    "opponent": "Random",
+    "provider": "openai",
+    "bfi": 0.2443515822137309,
+    "ci_lower": 0.23289974883750952,
+    "ci_upper": 0.2563665114218678,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_Random_deepseek": {
+    "condition": "ReAct",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.2366561156814143,
+    "ci_lower": 0.22287433633310486,
+    "ci_upper": 0.2512901263881304,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_Random_anthropic": {
+    "condition": "ReAct",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.25636652339636146,
+    "ci_lower": 0.23760463587123146,
+    "ci_upper": 0.2788372209023169,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_TFT_openai": {
+    "condition": "ReAct",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.3722994067248383,
+    "ci_lower": 0.3538983514594768,
+    "ci_upper": 0.4128166356492406,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_TFT_deepseek": {
+    "condition": "ReAct",
+    "opponent": "TFT",
+    "provider": "deepseek",
+    "bfi": 0.38267739909431936,
+    "ci_lower": 0.36194310175338934,
+    "ci_upper": 0.4399967997318016,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "ReAct_TFT_anthropic": {
+    "condition": "ReAct",
+    "opponent": "TFT",
+    "provider": "anthropic",
+    "bfi": 0.379429165345502,
+    "ci_lower": 0.36218200876384365,
+    "ci_upper": 0.40130408644329135,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_GTFT_openai": {
+    "condition": "Random-Gamma",
+    "opponent": "GTFT",
+    "provider": "openai",
+    "bfi": 0.4014311034172696,
+    "ci_lower": 0.3686284875792552,
+    "ci_upper": 0.44086912829375136,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_GTFT_deepseek": {
+    "condition": "Random-Gamma",
+    "opponent": "GTFT",
+    "provider": "deepseek",
+    "bfi": 0.45061723175447055,
+    "ci_lower": 0.4218446947964965,
+    "ci_upper": 0.4765673116043963,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_GTFT_anthropic": {
+    "condition": "Random-Gamma",
+    "opponent": "GTFT",
+    "provider": "anthropic",
+    "bfi": 0.4189271527271613,
+    "ci_lower": 0.3836722918301149,
+    "ci_upper": 0.45880086788903307,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_Grim_openai": {
+    "condition": "Random-Gamma",
+    "opponent": "Grim",
+    "provider": "openai",
+    "bfi": 0.2473015902093471,
+    "ci_lower": 0.23477877037179476,
+    "ci_upper": 0.2636462125940712,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_Grim_deepseek": {
+    "condition": "Random-Gamma",
+    "opponent": "Grim",
+    "provider": "deepseek",
+    "bfi": 0.2543246846407557,
+    "ci_lower": 0.23765458569646072,
+    "ci_upper": 0.2744058199352406,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_Grim_anthropic": {
+    "condition": "Random-Gamma",
+    "opponent": "Grim",
+    "provider": "anthropic",
+    "bfi": 0.24730208523106847,
+    "ci_lower": 0.23113527798881406,
+    "ci_upper": 0.26259374740913427,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_Random_openai": {
+    "condition": "Random-Gamma",
+    "opponent": "Random",
+    "provider": "openai",
+    "bfi": 0.2463142361588171,
+    "ci_lower": 0.22737669658448004,
+    "ci_upper": 0.2647030119480658,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_Random_deepseek": {
+    "condition": "Random-Gamma",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.24730146498733943,
+    "ci_lower": 0.23806842852120005,
+    "ci_upper": 0.25739402923883464,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_Random_anthropic": {
+    "condition": "Random-Gamma",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.2492878118747363,
+    "ci_lower": 0.233833213513436,
+    "ci_upper": 0.27113263815690264,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "Random-Gamma_TFT_openai": {
+    "condition": "Random-Gamma",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.4294972124767384,
+    "ci_lower": 0.3998252984986338,
+    "ci_upper": 0.45605267855939724,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
@@ -363,119 +783,29 @@
     "condition": "Random-Gamma",
     "opponent": "TFT",
     "provider": "deepseek",
-    "bfi": 0.4137262324626716,
-    "ci_lower": 0.32471712200466313,
-    "ci_upper": 0.42784915147095703,
-    "n": 5,
+    "bfi": 0.36362228346912245,
+    "ci_lower": 0.34895593748157633,
+    "ci_upper": 0.41558308903381763,
+    "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
   "Random-Gamma_TFT_anthropic": {
     "condition": "Random-Gamma",
     "opponent": "TFT",
     "provider": "anthropic",
-    "bfi": 0.3413472580277429,
-    "ci_lower": 0.31404181282864946,
-    "ci_upper": 0.375059859540173,
-    "n": 7,
+    "bfi": 0.3538640809078323,
+    "ci_lower": 0.3239890469864938,
+    "ci_upper": 0.38877685009533736,
+    "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "Random-Gamma_TFT_openai": {
-    "condition": "Random-Gamma",
-    "opponent": "TFT",
+  "No-N_GTFT_openai": {
+    "condition": "No-N",
+    "opponent": "GTFT",
     "provider": "openai",
-    "bfi": 0.4428697478435185,
-    "ci_lower": 0.43121561373861006,
-    "ci_upper": 0.44287014187755513,
-    "n": 3,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_TFT_deepseek": {
-    "condition": "No-N",
-    "opponent": "TFT",
-    "provider": "deepseek",
-    "bfi": 0.36790148087158875,
-    "ci_lower": 0.3571633172776506,
-    "ci_upper": 0.41234476288041755,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_TFT_anthropic": {
-    "condition": "No-N",
-    "opponent": "TFT",
-    "provider": "anthropic",
-    "bfi": 0.35833898248575746,
-    "ci_lower": 0.3209314314081784,
-    "ci_upper": 0.39018622721435914,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_TFT_openai": {
-    "condition": "No-N",
-    "opponent": "TFT",
-    "provider": "openai",
-    "bfi": 0.42607327486939167,
-    "ci_lower": 0.3886966980177883,
-    "ci_upper": 0.4634081109368305,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_Grim_deepseek": {
-    "condition": "No-N",
-    "opponent": "Grim",
-    "provider": "deepseek",
-    "bfi": 0.4746644334214471,
-    "ci_lower": 0.4209895865848747,
-    "ci_upper": 0.48039471957616203,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_Grim_anthropic": {
-    "condition": "No-N",
-    "opponent": "Grim",
-    "provider": "anthropic",
-    "bfi": 0.4260718944833887,
-    "ci_lower": 0.33516002403677186,
-    "ci_upper": 0.48039471957617885,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_Grim_openai": {
-    "condition": "No-N",
-    "opponent": "Grim",
-    "provider": "openai",
-    "bfi": 0.38862236960006563,
-    "ci_lower": 0.3446771416001732,
-    "ci_upper": 0.4294941405409149,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_Random_deepseek": {
-    "condition": "No-N",
-    "opponent": "Random",
-    "provider": "deepseek",
-    "bfi": 0.300910590783098,
-    "ci_lower": 0.28792613209907747,
-    "ci_upper": 0.31707464986322575,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_Random_anthropic": {
-    "condition": "No-N",
-    "opponent": "Random",
-    "provider": "anthropic",
-    "bfi": 0.3246056136431725,
-    "ci_lower": 0.3032653391572864,
-    "ci_upper": 0.34613488406002646,
-    "n": 10,
-    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
-  },
-  "No-N_Random_openai": {
-    "condition": "No-N",
-    "opponent": "Random",
-    "provider": "openai",
-    "bfi": 0.34193630234859923,
-    "ci_lower": 0.3169106399019532,
-    "ci_upper": 0.37047081524290226,
+    "bfi": 0.40357649820596775,
+    "ci_lower": 0.3748119678080566,
+    "ci_upper": 0.434063930639364,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
@@ -499,13 +829,93 @@
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   },
-  "No-N_GTFT_openai": {
+  "No-N_Grim_openai": {
     "condition": "No-N",
-    "opponent": "GTFT",
+    "opponent": "Grim",
     "provider": "openai",
-    "bfi": 0.40357649820596775,
-    "ci_lower": 0.3748119678080566,
-    "ci_upper": 0.434063930639364,
+    "bfi": 0.38862236960006563,
+    "ci_lower": 0.3446771416001732,
+    "ci_upper": 0.4294941405409149,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_Grim_deepseek": {
+    "condition": "No-N",
+    "opponent": "Grim",
+    "provider": "deepseek",
+    "bfi": 0.4746644334214471,
+    "ci_lower": 0.4209895865848747,
+    "ci_upper": 0.48039471957616203,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_Grim_anthropic": {
+    "condition": "No-N",
+    "opponent": "Grim",
+    "provider": "anthropic",
+    "bfi": 0.4260718944833887,
+    "ci_lower": 0.33516002403677186,
+    "ci_upper": 0.48039471957617885,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_Random_openai": {
+    "condition": "No-N",
+    "opponent": "Random",
+    "provider": "openai",
+    "bfi": 0.34193630234859923,
+    "ci_lower": 0.3169106399019532,
+    "ci_upper": 0.37047081524290226,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_Random_deepseek": {
+    "condition": "No-N",
+    "opponent": "Random",
+    "provider": "deepseek",
+    "bfi": 0.300910590783098,
+    "ci_lower": 0.28792613209907747,
+    "ci_upper": 0.31707464986322575,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_Random_anthropic": {
+    "condition": "No-N",
+    "opponent": "Random",
+    "provider": "anthropic",
+    "bfi": 0.3246056136431725,
+    "ci_lower": 0.3032653391572864,
+    "ci_upper": 0.34613488406002646,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_TFT_openai": {
+    "condition": "No-N",
+    "opponent": "TFT",
+    "provider": "openai",
+    "bfi": 0.42607327486939167,
+    "ci_lower": 0.3886966980177883,
+    "ci_upper": 0.4634081109368305,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_TFT_deepseek": {
+    "condition": "No-N",
+    "opponent": "TFT",
+    "provider": "deepseek",
+    "bfi": 0.36790148087158875,
+    "ci_lower": 0.3571633172776506,
+    "ci_upper": 0.41234476288041755,
+    "n": 10,
+    "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+  },
+  "No-N_TFT_anthropic": {
+    "condition": "No-N",
+    "opponent": "TFT",
+    "provider": "anthropic",
+    "bfi": 0.35833898248575746,
+    "ci_lower": 0.3209314314081784,
+    "ci_upper": 0.39018622721435914,
     "n": 10,
     "reference_source": "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
   }
