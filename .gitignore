@@ -78,6 +78,7 @@ neurips_submission.tex
 
 # Internal scripts (not needed for reproducibility)
 _inspect.py
+opp_breakdown.py
 audit_incomplete.py
 audit_meta.py
 audit_results.py
