@@ -1,0 +1,330 @@
+\documentclass{article}
+
+\PassOptionsToPackage{numbers, compress}{natbib}
+\usepackage{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{nicefrac}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\title{The Pro-Action Operator: A Scientifically-Informed, Multi-Timescale Self-Regulation Model for LLM-Agents}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\author{%
+  Anonymous\thanks{Author identities withheld for double-blind review. A companion work by the same author is currently under review at a regional venue; any citation here refers to it in anonymized form.} \\
+  Affiliation withheld \\
+  \texttt{anonymous@institution.edu}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Contemporary LLM-agent frameworks --- ReAct, LangGraph, OpenClaw --- have prioritized \textit{capability} over \textit{motivation}, deciding \textit{when} an agent acts through exogenous flow control or task-backlog heartbeats. Homeostatic reinforcement learning (Keramati--Gutkin 2014) and active-inference agents (Friston 2017; Tschantz et al.\ 2020) internalize regulation, but often through a compact objective rather than an explicit set of delayed regulatory subsystems. However, biological regulation is not single-timescale: converging work in stress physiology, self-regulation, affect, and cognitive control treats adaptation as the interaction of subsystems --- attention, perception, hormonal (SAM adrenergic, seconds; HPA cortisol, minutes), emotional, neuropsychological, cognitive --- exchanging signals across distinct delays, consistent with the mechanism behind Yerkes--Dodson inversion and delayed reappraisal (Porcelli--Delgado 2017). We propose the \textbf{Pro-Action operator} $\Gamma$, a recursively composable, multi-timescale thermostat system. Each subsystem $k$ updates as
+\[
+x_{k,t+1} = x_{k,t} - \kappa_k(x_{k,t}-x^{*}_{k,t}) + \lambda_k - \alpha_k\,\rho_k(a_t,e_{t+1}) + [W\,\phi(\mathbf{x}_{t-\tau_k})]_k,
+\]
+with $\phi=\tanh$ elementwise, subsystem-specific delay $\tau_k$ encoding a dimensionless SAM--HPA-like ratio ($\tau_{\mathcal{H}}^{\mathrm{HPA}} \gg \tau_{\mathcal{A}}$), and action selected by an arousal-gated mixer. $\Gamma$ is proposed as a finite, inspectable parameterization of regulation: the $\tau_k$ are explicit hyperparameters rather than hidden in orchestration depth. We specify three falsifiable properties a priori: (P1) elastic return to set-point; (P2) Yerkes--Dodson inverted-U; (P3) delayed reappraisal. As a Concept \& Feasibility contribution, the paper reports the model, a lightweight falsifiability protocol, computational sanity checks, and a preliminary LLM-agent benchmark snapshot. The current evidence is not a final validation; it shows that the operator can be coupled to frontier LLM agents while preserving non-degenerate, opponent-conditional behavior under partial coverage --- a feasibility claim, not a causal claim about the operator's contribution over baselines.
+\end{abstract}
+
+\paragraph{Keywords.}
+Homeostatic reinforcement learning; LLM agents; active inference; multi-timescale self-regulation; endogenous activation; cybernetics; self-regulation model.
+
+\section{Introduction}
+
+The deployment of LLM-based autonomous agents into settings of institutional consequence --- health triage, financial advice, public deliberation --- is moving faster than the science of how such agents should \textit{regulate themselves}. Whether an agent speaks, waits, defers, or escalates tends to be decided outside the agent, by an orchestrator whose control rules may be less expressive than the situations they coordinate: a small set of graph transitions, queues, or heartbeats is used to govern high-dimensional and shifting social or task states. In Ashby's terms, the controller may lack the requisite variety needed to match the variety of the environment \citep{ashby1956introduction}.
+
+A frequently reported symptom, consistent with this variety mismatch, is the loss of activation coherence in adversarial multi-agent deliberation: floor monopolization, context collapse, and interventions that appear decoupled from any internal state the agent could be said to carry (evidence observed by the authors in a companion work, currently under review). The pattern suggests that \textit{when} an agent acts may depend on structure the dominant paradigm does not explicitly represent.
+
+Contemporary LLM-agent frameworks --- ReAct, LangGraph, OpenClaw --- have prioritized \textit{capability} (what an agent can do) over \textit{motivation} (why and when it should act at all), addressing activation via cognitive while-loops and exogenous flow control. Homeostatic reinforcement learning (Keramati--Gutkin 2014) and active-inference agents (Friston 2017; Tschantz et al.\ 2020) internalize regulation, but do not provide a compact LLM-agent operator in which attention, interoception, emotion, memory, cognition, and stress-like physiology are all explicit delayed regulators. Intelligent animals, including humans, regulate behavior through multiple interacting systems --- attention, arousal, affect, memory, deliberation --- operating on distinct timescales whose relative priority shifts with context; dominant LLM-agent paradigms treat activation as a single-objective signal or exogenous flow control.
+
+The problem is older than LLM-agents. Mid-20th century behaviorism defined it precisely by bracketing it: the stimulus--response mapping could be studied scientifically because the intervening machinery --- the \textit{black box} --- was deliberately left unspecified. Decades of subsequent research opened that box from different angles: behavioral biology established that animal regulation is multi-drive and hierarchical; stress physiology revealed fast (adrenergic, seconds) and slow (cortisol, minutes) adaptation axes with distinct roles; affective neuroscience showed that emotion is not an output label but a construction that shapes perception, memory, and action; evolutionary game theory demonstrated that social behavior is governed by reciprocity and temporal discounting, not instantaneous utility; cybernetics formalized why a regulator must match the variety of what it controls. Each tradition contributed a piece. What has not been done for LLM-agents is to assemble them into a single, compact, falsifiable operator. Section~\ref{sec:related} reviews each contribution in detail.
+
+What remains comparatively unexplored is a single, computable, falsifiable operator that integrates these disciplinary insights for LLM agents. The central biological clue is that regulation is not a single controller but a \textit{system of subsystems} --- attention, perception, hormonal (SAM adrenergic, seconds; HPA cortisol, minutes), emotional, neuropsychological, cognitive --- exchanging signals across distinct delays. The SAM--HPA timescale split is not decorative: it is consistent with the mechanism behind Yerkes--Dodson inversion, post-stress reappraisal windows, and delayed-valuation shifts \citep{porcelli2017stress}. The scientific question is therefore whether activation itself can be treated as a regulated internal process --- a coupled set of thermostat-like variables whose delayed interactions determine when the agent should speak, wait, defer, or escalate --- and whether the smallest such structure remains distinguishable from a single-timescale regulator.
+
+We propose the \textbf{Pro-Action operator} $\Gamma$ as a model, not an experimental technique. $\Gamma$ treats activation as a recursively composable system of six coupled thermostats with explicit update delays. The contribution type is Concept \& Feasibility: the idea is intentionally broader than what can be validated in a single benchmark, but it must still be made operational enough to fail. The contributions of this paper are primarily \textit{modeling}: (i) a formal operator integrating multi-timescale regulation; (ii) the framing of $\Gamma$ as a Self-Regulation Model (SRM) class complementary to capability-oriented LAMs; (iii) an a priori specified falsifiability protocol; (iv) a reference implementation checked by computational sanity tests; and (v) a preliminary LLM-agent benchmark snapshot used as feasibility evidence rather than final empirical adjudication.
+
+\section{Related work}\label{sec:related}
+
+\paragraph{LLM-agent orchestration.} Recent LLM-agent frameworks such as ReAct \citep{yao2023react}, LangGraph, and OpenClaw made language models operational by embedding them in action loops, tool graphs, and multi-agent workflows. This was a necessary engineering step: without explicit structure, an LLM has no durable procedure for acting in an environment. More recently, agent architectures have incorporated persistent memory streams, reflection, and simulated affective states to enrich the content of decisions \citep{park2023generative,kaiya2023lyfe,wang2023emotional,wang2023voyager}. The limitation common to both generations is that activation is usually externalized: the graph or supervisor decides when the model acts; the model supplies content for that externally selected moment. $\Gamma$ is complementary: those works provide richer \textit{content}; $\Gamma$ provides a principled internal account of \textit{timing}.
+
+\paragraph{Internal regulation across timescales.} A different tradition begins from the opposite assumption: action should be driven by an internal regulatory state. Homeostatic RL makes internal deficit part of the reward \citep{keramati2014homeostatic}; active inference gives a broader variational formulation \citep{friston2017active,parr2022active}. These approaches are important --- they move regulation inside the agent --- but do not yield a compact operator with separately inspectable subsystem delays. Once regulation is internalized, the next question is whether a single regulatory signal is sufficient. Stress physiology and allostasis suggest it is not: fast sympathetic responses (SAM, seconds) and slower endocrine/cognitive recovery (HPA, minutes) play distinct adaptive roles \citep{sterling1988allostasis,mcewen2007physiology,kirschbaum1993cortisol}. The remaining question is which internal variables deserve to be modeled. Interoceptive and somatic-marker accounts connect bodily state to action readiness \citep{damasio1994descartes,craig2009you}; affect-regulation accounts treat emotion as part of how situations are appraised \citep{barrett2017how,ledoux2015rethinking}; evolutionary game theory adds reciprocity and temporal discounting as social constraints \citep{nowak2006evolutionary,henrich2005foundations}. Together, these literatures motivate attention, interoception, emotion, memory, cognition, and hormonal dynamics as functional regulators rather than decorative modules.
+
+\paragraph{Systems, cybernetics, and the gap.} If these variables are treated as separate regulators, the final problem is structural: how should they be composed? Cybernetics supplies the relevant language: Ashby's law of requisite variety requires a regulator rich enough to match the environment \citep{ashby1956introduction}; Beer's Viable System Model adds recursive organization \citep{beer1972brain}; systemism frames the relevant object as composition rather than isolated component \citep{bunge2003emergence,romero2018scientific}. The gap might be narrow yet important. To our knowledge, the threads above --- exogenous orchestration, homeostatic internalization, multi-timescale physiology, affect regulation, and cybernetic composition --- have not been combined into a small, falsifiable LLM-agent operator in which the six regulatory domains are explicit state variables with explicit delays. That is the gap $\Gamma$ is designed to occupy.
+
+\section{The Pro-Action operator}
+
+\subsection{Axioms of homeostatic autonomy (A1--A9)}
+
+Before defining $\Gamma$, we make explicit the modeling commitments that the operator assumes. The axioms are not empirical results or theorems; they state, in this model, what counts as an autonomous, self-regulating agent, which internal variables are allowed to regulate action, and how those variables may be composed. This is meant to avoid leaving the agent's ontology implicit in implementation choices. The axiom set was subjected to a formal coherence check using SMT-based tools (Z3) to verify that no pair of axioms is mutually contradictory under the intended semantics; all checks passed.
+
+We extend the Axioms of Homeostatic Autonomy from the companion work (A1--A3) with six additional axioms that make the multi-timescale structure explicit:
+
+\textbf{A1--A3 (Kernel).} Autonomy, Impulse, and Quality Gate: the agent maintains an internal deficit $\delta_i$ that drives action probability $p_i(t) = \sigma(D(\delta_i(t)))$, reduced by action quality $g$.
+
+\textbf{A4 (Perception as initial appraisal).} Every stimulus is appraised before selective attention. A perception operator $\mathcal{P}$ produces an initial situational appraisal $\tilde o_t = \mathcal{P}(o_t, \mathcal{I}_t, \mathcal{M}_t; x_{\mathcal{P},t})$, encoding what the stimulus means independent of current priorities.
+
+\textbf{A5 (Attention as saliency gate).} Not every appraised feature enters the action-selection context. An attention operator $\mathcal{A}$ filters the perceived signal, selecting $o'_t = \mathcal{A}(\tilde o_t, \mathcal{D}_t, \mathcal{M}_t; x_{\mathcal{A},t})$ based on current drives and memory. Interoceptive signals $\mathcal{I}_t$ feed in parallel to both $\mathcal{P}$ and $\mathcal{A}$.
+
+\textbf{A6 (Memory as ubiquitous prior).} A state $\mathcal{M}_t$ biases all subsystems and updates post-action.
+
+\textbf{A7 (Drives as set-point generators).} Set-points are not constants: $\mathbf{x}^{*}_t = \mathcal{D}_t$.
+
+\textbf{A8 (Fast/slow parallelism with arbitrator).} Two routes produce action candidates $c^{\text{fast}}$, $c^{\text{slow}}$; an arbitrator assigns precision weights $\pi_{\text{fast}}$, $\pi_{\text{slow}}$.
+
+\subsection{The operator}
+
+$\Gamma$ is defined as the composition:
+\begin{equation}
+\Gamma := \mathcal{O}\Big[\text{ARB}_\pi\Big(\underbrace{(\mathcal{N}_{\text{fast}}\circ\mathcal{H}_{\text{SAM}})}_{\text{fast route}} \big\| \underbrace{(\mathcal{C}\circ\mathcal{E}\circ\mathcal{A}\circ\mathcal{P})}_{\text{slow route}} \Big)\Big]\Big|_{\mathcal{I},\,\mathcal{M},\,\mathcal{D}}
+\end{equation}
+
+Each subsystem $k$ updates as:
+\begin{equation}\label{eq:master}
+\boxed{x_{k,t+1} = x_{k,t} - \kappa_k(x_{k,t}-x^{*}_{k,t}) + \lambda_k - \alpha_k\,\rho_k(a_t,e_{t+1}) + [W\,\phi(\mathbf{x}_{t-\tau_k})]_k}
+\end{equation}
+with $\phi = \tanh$ elementwise. Action is selected by:
+\begin{equation}\label{eq:mixer}
+a^{*}_{t+1} = \arg\min_a\; \pi_f\,\mathcal{F}_{\text{short}} + (1-\pi_f)\,\mathcal{F}_{\text{long}} + \gamma\|Q^{1/2}(\mathbf{x}_{t+1}(a) - \mathbf{x}^{*}_{t+1})\|^2, \quad \pi_f = \sigma(c \cdot x_{\mathcal{H}} + b)
+\end{equation}
+where $\mathbf{x}_{t+1}(a)$ denotes the predicted next state under candidate action $a$, depending on $a$ through the action-quality term $\rho_k(a, e_{t+1})$ in Eq.~\eqref{eq:master} --- it is this dependence that makes the homeostatic deficit penalty action-relevant. $\mathcal{F}_{\text{short}}$, $\mathcal{F}_{\text{long}}$ are generic cost functionals inspired by expected-free-energy control over horizons $h_s \ll h_l$, and $Q \succeq 0$ is a diagonal precision matrix (distinct from the coupling matrix $W$ in Eq.~\eqref{eq:master}). In the IPD instantiation below we do not claim a strict active-inference implementation with an explicit generative model. The mixer is not literally executed as an argmin over LLM completions: the controller modulates the prompt seen by the LLM (Section~\ref{sec:prompt-protocol}) and the LLM emits the action; Eq.~\eqref{eq:mixer} is the compact controller-level expression of fast/slow arbitration that the prompt encodes.
+
+\subsection{Non-absorption of delay parameters}
+
+\begin{proposition}[Non-absorption of delays]\label{prop:nonabsorption}
+Let $\Gamma_\tau$ denote Eq.~\eqref{eq:master} with delays $\boldsymbol{\tau} = (\tau_1,\dots,\tau_6) \in \mathbb{Z}_{\geq 0}^6$ and coupling matrix $W \neq \mathbf{0}$. For any two delay vectors $\boldsymbol{\tau} \neq \boldsymbol{\tau}'$ with $\tau_k \neq \tau_k'$ for at least one $k$ such that $[W]_{k,\cdot} \neq \mathbf{0}$, there is no reparametrization $(\kappa_k',\lambda_k',\alpha_k')$ of the non-delayed terms that makes the impulse-response of $\Gamma_{\tau'}$ identical to that of $\Gamma_\tau$. Equivalently, $\tau_k$ is not absorbable into $(\kappa_k,\lambda_k,\alpha_k)$.
+\end{proposition}
+
+The argument (Appendix~\ref{app:proof}) is an order-mismatch argument in the discrete-time z-domain: the delayed subsystem has transfer function $1/(z^{\tau_k+1}-(1-\kappa_k)z^{\tau_k})$, of denominator degree $\tau_k+1$, with an impulse response identically zero for the first $\tau_k$ samples by causality. A first-order delay-free reparametrization cannot enforce this delayed zero-output period. Two systems with distinct delays therefore produce distinct cross-correlation peaks (the first non-zero lag is $\tau_k+1$), making $\tau_k$ identifiable from observed trajectories. This is not a structural identifiability theorem for the full nonlinear system (which remains future work). Still, it establishes that the delays are non-redundant parameters and that $\Gamma$ occupies a distinct model class from any delay-free parametrization of the same dimension.
+
+\subsection{Reductions to simpler models}
+
+\textbf{Reduction to Driveplexity.} Driveplexity (companion work, currently under review) is a single-drive homeostatic activation model in which each LLM-agent maintains a scalar epistemic deficit $\delta_i$ that decays at a fixed rate and is reduced by the quality of each action executed. $\Gamma$ subsumes it: when $x_{\mathcal{A}} = \dots = x_{\mathcal{N}} \equiv 0$, $\mathcal{A}=\text{id}$, $\mathcal{I}=\mathcal{M}=\mathcal{D}=\emptyset$, $\pi_{\text{fast}}\equiv 0$, $W=\mathbf{0}$, $\kappa_{\mathcal{C}}=0$, and $\mathbf{x} \to x_{\mathcal{C}} \equiv \delta_i$, Equation~\eqref{eq:master} reduces to $\delta_{t+1} = \delta_t + \lambda - \alpha \cdot g(e^{(t)}, e^{(t+1)})$, which is exactly A1--A3.
+
+\textbf{Reduction to homeostatic RL.} When $\boldsymbol{\kappa}=\mathbf{0}$ and all $\tau_k=0$, $\Gamma$ becomes a reactive drive-based policy consistent with the simplified form of Keramati--Gutkin (2014).
+
+\section{Falsifiability protocol}
+
+To avoid the vacuity of untestable models, three properties are specified a priori before any experiment:
+
+\textbf{(P1) Elastic return to set-point.} Under perturbation, each $x_k$ returns to $x^{*}_k$ with measurable half-life $t_{1/2}$.
+
+\textbf{(P2) Yerkes--Dodson inverted-U.} Arousal vs. performance follows an inverted-U; ablation of SAM coupling ($\mathcal{H}_{\text{SAM}}$) collapses it to monotone. Target BFI $\geq 0.70$ against Porcelli--Delgado (2017).
+
+\textbf{(P3) Delayed reappraisal.} Cross-lag correlation between $x_{\mathcal{C}}$ and $x_{\mathcal{E}}$ peaks at lag $\tau_{\mathcal{H}}^{\mathrm{HPA}}$.
+
+\subsection{Behavioral Fidelity Index (BFI)}
+
+\begin{equation}
+\mathrm{BFI} = \exp\bigl(-W_1(\mu_{\text{agent}}, \mu_{\text{human}})/\lambda\bigr)
+\end{equation}
+over-normalized marginals of cooperation rate, action volatility, and log-response-time proxy. The response-time proxy is an engineering observable, not a claim of equivalence to human decision time. The model is supported if BFI exceeds thresholds on $\geq 2$ of 3 properties and the corresponding ablation degrades the property.
+
+\subsection{Experimental design}
+
+We test $\Gamma$ within the Iterated Prisoner's Dilemma (IPD). The reason for this choice is that IPD has extensive empirical evidence of human behavior in repeated social interaction \citep{axelrod1984evolution,nowak2006evolutionary,porcelli2017stress}, providing a non-trivial baseline for comparing agent behavior against human patterns. The setting we establish for the game is 10\% noise and 50 rounds, with a forced-defection perturbation at round 10 to test the elastic-return property (P1) by creating a measurable deviation from the set-point. Sotopia-derived deliberation \citep{zhou2024sotopia} is deferred to future work because it is better suited for ecological validity than for the first controlled falsification of the operator.
+
+Baselines serve two purposes: ReAct and LangGraph with memory represent the dominant exogenous-activation paradigm; Driveplexity/homeostatic-RL reduction tests whether $\Gamma$ adds value beyond a single-drive controller; a small discrete active-inference comparator implemented in \texttt{pymdp} checks whether the fast/slow arbitration in $\Gamma$ captures a distinct signature from standard active inference.
+
+Three instruction-tuned LLM providers are used as policy-execution layers: OpenAI (\texttt{gpt-5-nano}), Anthropic (\texttt{claude-haiku-4-5}), and DeepSeek (\texttt{deepseek-v4-flash}). These models were selected as the comparable lite/flash/nano variants of each provider's frontier line—well benchmarked and roughly matched in capability tier. Using three independent providers reduces the controller-level findings' dependence on any single provider's instruction-tuning regime. Each provider/model is held fixed across conditions, so that within-provider contrasts isolate the controller rather than model identity. Provider-level summaries are reported as diagnostics, not as claims about provider quality.
+
+\textbf{Inference parameters.} OpenAI \texttt{gpt-5-nano} uses default temperature with a per-round seed for reproducibility; Anthropic \texttt{claude-haiku-4-5} uses temperature $0$ and \texttt{max\_tokens} $512$ (no seed parameter exposed); DeepSeek \texttt{deepseek-v4-flash} uses temperature $0$ and \texttt{max\_tokens} $512$. Calls return JSON objects; OpenAI and DeepSeek use \texttt{response\_format: json\_object}. Concurrency is capped at $8$ in-flight cells per provider, with up to $4$ exponential retries on transient errors.
+
+All frozen constants are assigned a provenance category before evaluation (Table~\ref{tab:params}). Values marked as smoke-test calibration were chosen before the LLM benchmark to satisfy non-divergence, set-point return, and visible perturbation response in the numerical simulator; final reporting will include sensitivity checks for critical constants.
+
+\begin{table}[h]
+\caption{Frozen parameter provenance for the IPD instantiation. Index mapping: 0=Perception, 1=Attention, 2=Hormonal (SAM), 3=Hormonal (HPA), 4=Neuropsychological, 5=Cognitive.}
+\label{tab:params}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & Value & Provenance \\
+\midrule
+$\boldsymbol{\lambda}$ & $[.08,.07,.10,.08,.06,.10]$ & smoke-test calibration \\
+$\boldsymbol{\alpha}$ & $[.20,.15,.25,.20,.10,.15]$ & smoke-test calibration \\
+$\boldsymbol{\kappa}$ & $[.10,.10,.15,.12,.08,.10]$ & smoke-test calibration \\
+$\mathbf{x}^{*}$ & $[.3,.2,.3,.1,.2,.4]$ & principled prior / stable interior set-point \\
+$\tau_{\mathrm{SAM}},\tau_{\mathrm{HPA}}$ & $1,5$ rounds & dimensionless fast/slow ratio \\
+$W$ & sparse signed coupling matrix & functional constraint and ablation interpretability \\
+$Q$ & $I_6$ (identity) & smoke-test calibration; precision matrix in Eq.~\eqref{eq:mixer} \\
+Rounds & 50 & comparability requirement for final cells \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Seven ablation conditions (Table~\ref{tab:ablaciones}) isolate the contribution of the main regulatory components. Full-$\Gamma$ uses all six thermostats in the canonical order: Perception (appraisal) $\to$ Attention (saliency filtering) $\to$ Emotional (valence) $\to$ Hormonal (arousal, fast-slow routes) $\to$ Neuropsychological and Cognitive (deliberation routes in parallel) $\to$ Arbitrator (weighting). No-$\mathcal{H}$ removes the hormonal channel (both SAM and HPA); No-$\mathcal{E}$ neutralizes emotional valence; No-$\mathcal{N}$ removes the slow neuropsychological route. Random-$\Gamma$ permutes the entries of $W$ while preserving all other parameters --- same six thermostats, same $\tau_k$, same hyperparameters, but biologically-unmotivated wiring --- to isolate the contribution of the coupling structure rather than parameter count. Collapse-NC merges the neuropsychological ($\mathcal{N}$) and cognitive ($\mathcal{C}$) subsystems into a single regulator by averaging their parameters and symmetrizing their $W$ rows and columns, testing whether the 6-subsystem partition is necessary or whether 5 would suffice.
+
+\begin{table}[h]
+\caption{Ablations. Full-$\Gamma$ uses all six thermostats; ablations remove, permute, or collapse selected regulatory components.}
+\label{tab:ablaciones}
+\centering
+\begin{tabular}{llll}
+\toprule
+Condition & Change from Full-$\Gamma$ & Purpose \\
+\midrule
+Full-$\Gamma$ & --- & Reference \\
+No-$\mathcal{H}$ & Hormonal channel ($\mathcal{H}_{\text{SAM}}$, $\mathcal{H}_{\text{HPA}}$) zeroed & Fast-timescale contribution \\
+No-$\mathcal{E}$ & Emotional valence zeroed & Affect as stabilizer vs.\ noise \\
+No-$\mathcal{N}$ & Neuropsychological channel zeroed & Slow deliberation contribution \\
+Random-$\Gamma$ & $W$ entries permuted; $\tau_k$, $\kappa$, $\lambda$, $\alpha$ unchanged & Biologically-motivated wiring vs.\ parameter count \\
+Collapse-NC & $\mathcal{N}$ and $\mathcal{C}$ merged into one regulator & 6-subsystem vs.\ 5-subsystem partition \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Prompt protocol and label-priming control}\label{sec:prompt-protocol}
+
+The controller modulates the LLM through a frozen, version-controlled prompt template: each round, the six thermostat values $\mathbf{x}_t$ and the aggregated proposal $p_C, h_{\mathrm{SAM}}$ are inserted with semantic anchors pairing each numeric value with its set-point and a qualitative low/high interpretation (e.g., \texttt{hormonal = 0.58 (set-point 0.30; low = under-aroused / calm, high = elevated stress/arousal)}). The LLM may follow or override $p(C)$; the controller modulates rather than overrides. A known failure mode is that the LLM responds to \emph{labels} rather than to the underlying dynamics. To address this, the protocol pre-specifies a \emph{scrambled-labels} control arm in which the six semantic labels are permuted to neutral identifiers (\texttt{metric\_A}, \texttt{metric\_B}, \dots) while numeric values remain bound to their true subsystem; behavioral identity between Full-$\Gamma$ and scrambled-labels would confirm the controller dynamics carry the signal rather than lexical priming. This condition is reserved for the post-completion ancillary analysis. Full implementation details are available in the open repository cited under Reproducibility in \S\ref{sec:limits}.
+
+\section{Preliminary verification}
+
+Before empirical evaluation, we subjected Equation~\eqref{eq:master} and its reference implementation to computational sanity checks using symbolic algebra (SymPy), SMT-based counterexample search (Z3), arbitrary-precision arithmetic (mpmath), and numerical dynamical tests (NumPy). These checks are not a formal verification of the scientific model. They test internal consistency: whether the implementation preserves the intended update structure, avoids immediate numerical divergence, and contains Driveplexity as a reduction.
+
+\textbf{Smoke-test results (all pass):} (1) Set-point convergence: $\|\mathbf{x}_t - \mathbf{x}^{*}\| < 0.15$ after 10 rounds. (2) Elastic return half-life $t_{1/2} = 3.2$ rounds. (3) $\pi_{\text{fast}}$ rises from 0.35 to 0.92 under threat. (4) 20 iterations without divergence. (5) Driveplexity is an invariant subspace of $\Gamma$ ($\delta = -0.0513$).
+
+\textbf{Simulation trajectories.} Figure~\ref{fig:thermostats} shows the six thermostat trajectories for two agents over 30 rounds. Both agents converge toward their set-points ($\mathbf{x}^{*} = [0.3, 0.2, 0.3, 0.1, 0.2, 0.4]$) despite perturbation at round 10 (forced defection).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/fig1_thermostats.png}
+\caption{Subsystem thermostat trajectories for two agents in IPD with noise. The perturbation at round 10 (forced defection) triggers a transient deviation, followed by an elastic return toward set points.}
+\label{fig:thermostats}
+\end{figure}
+
+Cumulative payoffs and the P1 elastic-return zoom on $x_{\mathcal{H}}$ are provided in Appendix~\ref{app:sensitivity} (Figures~\ref{fig:payoffs} and \ref{fig:elastic}). These results verify the \textit{internal consistency} of the dynamics, not biological or behavioral fidelity. Parameter sensitivity checks (Appendix~\ref{app:sensitivity}) confirm that P1 elastic return is robust to $\pm 20\%$ uniform scaling of $\kappa$ and $\lambda$, indicating that the smoke-test calibration point is not isolated.
+
+\subsection{Interim LLM-agent benchmark snapshot}
+
+We then asked whether the operator remains meaningful when the policy-execution layer is no longer a numerical mock agent but a real LLM prompted to play the Iterated Prisoner's Dilemma under a frozen controller state. Each \emph{cell} denotes an independent experimental unit: a tuple (\mbox{$\Gamma$-condition} $\times$ provider $\times$ opponent $\times$ seed) run for 50 IPD rounds. At the current snapshot, 666 cells have completed the required 50 rounds ($\approx$70\% of the planned grid). Five of the six conditions are at full balanced coverage: 120 Full-$\Gamma$, 120 No-$\mathcal{H}$, 120 No-$\mathcal{E}$, 120 No-$\mathcal{N}$, and 120 Random-$\Gamma$ cells, each balanced across three providers and four opponent policies. Collapse-NC has 66 cells across three opponents (GTFT not yet covered). The exogenous-activation baselines (ReAct, Driveplexity) remain at zero completed cells. The results below are consequently evidence of feasibility, not final empirical adjudication.
+
+The first useful sign is that Full-$\Gamma$ does not collapse to a trivial policy. Mean cooperation is 0.720 (sd 0.165, 95\% CI [0.690, 0.750]; 10k bootstrap resamples), with action volatility of 16.0 switches per 50-round cell (95\% CI [15.0, 17.0]). Opponent sensitivity is preserved and notably discriminative: Full-$\Gamma$ cooperates more with TFT (0.829) and GTFT (0.839), less with Grim (0.495), and intermediately with Random (0.719). The contrast with Random-$\Gamma$ (now 120 balanced cells) is informative: a randomly-wired controller cooperates uniformly across all opponents --- TFT 0.831, GTFT 0.825, Grim 0.843, Random 0.835 --- producing nearly flat opponent sensitivity (range 0.019) compared to Full-$\Gamma$'s sharply differentiated profile (range 0.344). The biologically-motivated coupling structure in $W$ appears to contribute not to the \textit{level} of cooperation but to the \textit{discriminability} of the policy across opponent types. This is the strongest internal evidence so far that the wiring of $\Gamma$ matters beyond mere parameter count. We are explicit that this does \emph{not} establish that the controller \textit{causes} the discrimination --- that contrast requires baselines (ReAct, Driveplexity) that are not yet covered.
+
+The ablations expose a differentiated picture. No-$\mathcal{H}$ is close to Full-$\Gamma$ in cooperation (0.745 vs.\ 0.720, 95\% CI difference overlapping) but meaningfully lower in volatility (14.1 vs.\ 15.9 switches). The cooperation-rate similarity does not refute the hormonal channel's contribution; it re-focuses the question onto dynamic responsiveness under perturbation rather than baseline levels. No-$\mathcal{E}$ is nearly indistinguishable from Full-$\Gamma$ in aggregate cooperation (0.715 vs.\ 0.720) and volatility (15.9 vs.\ 15.9), suggesting that under normal conditions emotional valence is neither beneficial nor disruptive --- but the degenerate-regime evidence below qualifies this. No-$\mathcal{N}$, now with 120 cells and full opponent balance, shows cooperation essentially equal to Full-$\Gamma$ (0.722 vs.\ 0.720, CIs overlapping); the apparent cooperation gap of 0.054 in earlier 68-cell data (GTFT missing) has closed entirely with balanced coverage, validating the coverage-bias interpretation. Notably, No-$\mathcal{N}$ has the shortest recovery delay (6.42 rounds, 95\% CI [5.42, 7.42], vs.\ Full-$\Gamma$ 7.23 [6.38, 8.10]). This is consistent with the asymmetric prediction: $\mathcal{H}$ acts on the fast timescale ($\tau_{\mathrm{SAM}}=1$) and its removal should \emph{slow} recovery; $\mathcal{N}$ acts as the slow deliberative channel and its removal should \emph{accelerate} recovery by reducing slow-cycle inertia --- the two ablations predict opposite-sign effects on the same observable, which is precisely what pre-committed criterion (i) below tests.
+
+To prevent post-hoc reframing of the No-$\mathcal{H}$ cooperation-rate result, we commit to the following criteria before benchmark completion. The hormonal channel will be considered to contribute distinct \emph{dynamic responsiveness} if Full-$\Gamma$ satisfies at least two of the following conditions relative to No-$\mathcal{H}$: (i) shorter cooperation recovery delay ($\texttt{coop\_recovery\_delay}$, the rounds required after forced defection for cooperation to recover to halfway between the post-shock minimum and the pre-shock baseline) over the post-perturbation window; (ii) higher conditional action volatility in rounds 11--20 relative to the pre-perturbation baseline (rounds 1--9); (iii) a larger recovery-delay variance, indicating fuller mobilization of the fast route. These criteria use only observable actions, not internal states, avoiding circularity. Current values (Full-$\Gamma$: 7.23 rounds, 95\% CI [6.38, 8.10]; No-$\mathcal{H}$: 7.38 rounds [6.45, 8.30]) overlap --- consistent with the claim that completion data, not the present snapshot, is needed for adjudication. Figure~\ref{fig:recovery} shows the recovery-delay distributions at snapshot time. We pre-commit to the negative outcome as well: if upon completion none of (i)--(iii) separates Full-$\Gamma$ from No-$\mathcal{H}$, we will report this as a null result for the hormonal channel's dynamic-responsiveness contribution under the IPD/50-round protocol, and discuss what experimental conditions (multiple perturbations, longer horizons, cooperative dominance shifts) might surface separation if it exists. Pre-commitment to a publishable null is the integrity test of the pre-commitment.
+
+Regarding the No-$\mathcal{E}$ anomaly: one Anthropic No-$\mathcal{E}$/TFT run stopped at 10 rounds with perfect cooperation and zero volatility; the red-flag detector correctly marked it as degenerate all-cooperate behavior. The subsequent 120-cell balanced coverage shows normal cooperation (0.715) and volatility (15.9), suggesting the anomaly was an early-coverage artifact rather than a systematic effect. It remains a useful warning: without the emotional channel, the controller may become overly stable in specific opponent-provider combinations.
+
+Table~\ref{tab:snapshot} consolidates the four primary conditions for the reader.
+
+\begin{table}[h]
+\caption{Snapshot summary ($n=120$ each except Collapse-NC, $n=66$, GTFT pending). Means with 95\% bootstrap CIs (10k resamples). Grim cooperation is shown separately as the primary discriminative observable.}
+\label{tab:snapshot}
+\centering
+\small
+\begin{tabular}{lccccl}
+\toprule
+Condition & Coop (all) & Coop (Grim) & Volatility & Rec.\ delay & Note \\
+\midrule
+Full-$\Gamma$ & $0.720$ [.690,.750] & $0.495$ & $16.0$ [15.0,17.0] & $7.15$ [6.32,8.01] & Reference; strong Grim discrimination \\
+No-$\mathcal{H}$ & $0.745$ [.714,.775] & $0.517$ & $14.1$ [13.0,15.2] & $7.38$ [6.47,8.32] & Lower volatility; recovery overlaps \\
+No-$\mathcal{E}$ & $0.717$ [.689,.744] & $0.476$ & $16.1$ [15.1,17.0] & $7.57$ [6.71,8.42] & Indistinguishable in aggregate \\
+No-$\mathcal{N}$ & $0.722$ [.690,.754] & $0.518$ & $15.3$ [14.3,16.3] & $6.42$ [5.44,7.45] & Faster recovery; less caution vs.\ Grim \\
+Random-$\Gamma$ & $0.834$ [.820,.846] & $0.843$ & $12.7$ [11.9,13.6] & $6.72$ [5.81,7.63] & Flat opponent profile; Grim sensitivity lost \\
+Collapse-NC & $0.838$ [.825,.851] & $0.829$ & $12.9$ [11.8,13.9] & $7.61$ [6.26,8.97] & Partial ($n=66$, no GTFT); similar to Random-$\Gamma$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Random-$\Gamma$ now has 120 balanced cells across all opponents and providers. Mean cooperation is 0.834 (95\% CI [0.820, 0.846], sd 0.071), with volatility 12.7 (95\% CI [11.9, 13.6]) and recovery delay 6.72 (95\% CI [5.81, 7.63]). Critically, the opponent breakdown is nearly flat: 0.831 (TFT), 0.825 (GTFT), 0.843 (Grim), 0.835 (Random). The high and uniform cooperation with Grim --- a persistent defector that drives Full-$\Gamma$ to 0.495 --- indicates that Random-$\Gamma$ has lost the discriminative response to opponent type. This is not merely a cooperation-level difference (Random-$\Gamma$ cooperates more on average than Full-$\Gamma$); it is a qualitative difference in the shape of the policy: the biologically-motivated wiring in $W$ appears necessary for the agent to develop a Grim-sensitive regulation, not just a high-cooperation baseline. Collapse-NC (66 cells, GTFT pending) shows similar undifferentiated high cooperation (TFT 0.847, Grim 0.829), suggesting that collapsing the N--C partition also reduces opponent-discrimination.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/fig4_recovery_analysis.png}
+\caption{Cooperation recovery delay (rounds post-perturbation to half-recovery) for the three relevant ablations. Full-$\Gamma$ vs No-$\mathcal{H}$ distributions overlap (consistent with the pre-committed criterion requiring completion data for adjudication); No-$\mathcal{N}$ shifts toward shorter delays, consistent with the model's prediction that removing the slow deliberative channel accelerates recovery.}
+\label{fig:recovery}
+\end{figure}
+
+Thus, the preliminary benchmark does not validate $\Gamma$ against human distributions, and it does not yet adjudicate BFI. What it does show is that the operator is operational in frontier LLM agents, that ablations expose measurable behavioral differences, and that the experiment can surface degenerate regimes rather than hide them within aggregate averages. The absence of baselines (ReAct, Driveplexity) in the current snapshot is the principal remaining gap: without them, the claim that $\Gamma$ contributes over exogenous activation remains an open question. That is the level of evidence this version claims: Feasibility with explicitly identified open questions, not completion.
+
+\section{Discussion and limitations}\label{sec:limits}
+
+\paragraph{What $\Gamma$ is not.} We do not claim biological authenticity. The subsystems are functional analogs, not neural simulations. $\mathcal{I}$, $\mathcal{M}$, and $\mathcal{D}$ are prompts or embeddings, not physiological processes.
+
+\paragraph{Limitations.} (i) With $W \neq \mathbf{0}$ and nonlinearity, convergence is not guaranteed. (ii) $W$ has 30 free parameters; calibration requires data that does not yet exist. A natural calibration path is Bayesian optimization or system identification over $W$ using longitudinal subsystem traces from instrumented multi-agent runs, with priors anchored by the sign and order-of-magnitude constraints from Section~3. (iii) The cost functionals in Equation~\eqref{eq:mixer} are inspired by active-inference control but are not Lyapunov functions in this non-Markovian setting. (iv) The LLM benchmark is currently a partial snapshot, not a final completed experiment; all final comparisons must use only 50-round cells with balanced coverage. (v) Response latency is used only as an engineering proxy and should be interpreted distributionally, since human cooperation latency is context- and conflict-dependent. (vi) The current ablations remove subsystems entirely rather than isolating delay timing; a delay-equalized control (all $\tau_k = 0$ with subsystems active) is needed to attribute observed dynamics specifically to the delay structure rather than to subsystem presence, and is reserved for a follow-up study.
+
+\paragraph{Broader impacts.} Self-regulation models could be misused to create more persuasive deceptive agents. Mitigation: the model is interpretable at the subsystem level and falsifiable by design.
+
+\paragraph{Reproducibility.} \url{https://anonymous.4open.science/r/proaction-NEURIPS2026}
+
+\section{Conclusion}
+
+We proposed the Pro-Action operator $\Gamma$, a multi-timescale self-regulation model for LLM-agents. $\Gamma$ formalizes activation as a composition of six coupled thermostats with explicit delays, distinguishable from single-timescale regulators by its finite delayed parameterization. Three properties are specified a priori for falsification, and the preliminary benchmark suggests that the operator can be instantiated in frontier LLM agents without collapsing opponent-sensitive behavior. To conclude, the major contributions of this paper can be summarized as follows:
+
+\begin{itemize}
+\item A problem-first reframing of LLM-agent activation as self-regulation, emphasizing the mismatch between environment complexity and current activation-control simplicity.
+\item A compact operator for multi-timescale regulatory state, with explicit delay ratios inspired by physiological SAM--HPA dynamics but implemented as dimensionless controller parameters.
+\item An ablation-based falsifiability protocol, with three a priori specified properties (elastic return, Yerkes--Dodson inverted-U, delayed reappraisal) and a red-flag system that surfaces degenerate regimes.
+\item Preliminary feasibility evidence from a partial LLM-agent benchmark, showing that $\Gamma$ produces non-degenerate, condition-sensitive behavior while exposing unresolved anomalies for further investigation.
+\end{itemize}
+
+The value of $\Gamma$ lies not only in the mechanism itself, but in providing a testable way to ask whether endogenous self-regulation at the subsystem level can be identified, measured, and engineered in autonomous agents. A matter for further study is whether the fast/slow route primarily contributes to dynamic responsiveness under perturbation or to baseline cooperation levels, and whether the emotional channel serves as a stabilizer or a source of over-stability in certain opponent contexts. As the benchmark completes, the protocol transitions from feasibility evidence to full empirical adjudication; recursive closure --- the hypothesis that $\Gamma(\Gamma(\cdot))$ preserves type signature and enables Beer-style VSM recursion --- is a natural target for multi-agent follow-up work.
+
+\bibliographystyle{unsrtnat}
+\bibliography{referencias}
+
+\newpage
+\appendix
+\section{Argument for Proposition~\ref{prop:nonabsorption}}\label{app:proof}
+
+We give a sketch for the case $K=2$ subsystems; the argument extends to arbitrary $K$.
+
+\paragraph{Setup.} Consider two subsystems $k=1,2$ with the linearization of Eq.~\eqref{eq:master} near set-point $\mathbf{x}^*$. Letting $\tilde x_k = x_k - x^*_k$ and absorbing constant terms, the linearized dynamics are
+\[
+\tilde x_{k,t+1} = (1-\kappa_k)\tilde x_{k,t} + \sum_{j} c_{kj}\,\tilde x_{j,t-\tau_k},
+\]
+where $c_{kj} = W_{kj}\tanh'(x^*_j) \approx W_{kj}\cdot\mathrm{sech}^2(\phi_k x^*_j)$ and we set $\phi_k = $ elementwise gain (here $\approx 1$ for small $x^*$). Taking the $z$-transform gives the transfer function from subsystem $j$'s input to subsystem $k$'s output:
+\[
+H_{kj}(z) = \frac{c_{kj}\, z^{-\tau_k}}{z - (1-\kappa_k)}.
+\]
+
+\paragraph{Order mismatch.} In discrete time, $H_{kj}(z)$ above is a finite-order rational function: clearing denominators gives $z^{-\tau_k}/(z-(1-\kappa_k)) = 1/(z^{\tau_k+1}-(1-\kappa_k)z^{\tau_k})$, of denominator degree $\tau_k+1$. The non-absorption property, therefore, does not rest on the transcendentality of the delay (it would in continuous time, but not here). It rests on \emph{order}: a delay-free, first-order subsystem of the form $1/(z-(1-\kappa_k'))$ has impulse response $(1-\kappa_k')^t$ for $t \geq 0$, which is non-zero from $t=0$. The delayed system, by contrast, has an impulse response identically zero for the first $\tau_k$ samples by causality. No reparametrization $(\kappa_k', c_{kj}')$ of a first-order delay-free system can enforce this delayed zero-output period, because that would require a model of denominator degree $\geq \tau_k+1$ with a specific zero pattern in the numerator. Hence, the delays are not absorbable into the non-delayed parameters.
+
+\paragraph{Consequence for identifiability.} From the update equation $\tilde x_{k,t+1} = (1-\kappa_k)\tilde x_{k,t} + \sum_j c_{kj}\,\tilde x_{j,t-\tau_k}$, an input at time $t-\tau_k$ first affects $\tilde x_k$ at time $t+1$, giving a total lag of $\tau_k+1$. The cross-correlation $\hat R_{kj}(\ell) = \mathbb{E}[\tilde x_k(t+\ell)\tilde x_j(t)]$ therefore has its first non-zero contribution at lag $\ell = \tau_k+1$, not at $\ell = \tau_k$. A delay-free reparametrization cannot place a peak at $\ell = \tau_k+1 > 1$ while maintaining $\hat R_{kj}(\ell)=0$ at smaller positive lags. Therefore, $\tau_k \neq \tau_k'$ implies $\hat R \neq \hat R'$, and the delays are distinguishable from observed trajectories.
+
+\paragraph{Scope.} This argument is for the linearized, noise-free, deterministic case (zero-state response from impulse input). Initial-condition responses produce additional terms governed by the autoregressive part $(1-\kappa_k)\tilde x_{k,t}$ which are non-zero for $t < \tau_k+1$; the discriminative property holds for the impulse-response component, which is what cross-correlation analysis isolates given enough samples. In the nonlinear stochastic setting of $\Gamma$, cross-correlations are distorted, but the peak structure is preserved under mild non-linearity \citep{oppenheim1999discrete}. Full structural identifiability of the nonlinear system, including the coupling matrix $W$, remains an open problem.
+
+\section{Parameter sensitivity analysis and simulation figures}\label{app:sensitivity}
+
+\begin{figure}[h]
+\centering
+\begin{minipage}{0.48\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/fig2_payoffs.png}
+\caption{Cumulative payoffs in 30-round IPD with 10\% noise.}
+\label{fig:payoffs}
+\end{minipage}\hfill
+\begin{minipage}{0.48\linewidth}
+\centering
+\includegraphics[width=\linewidth]{figures/fig3_elastic_return.png}
+\caption{Elastic return of $x_{\mathcal{H}}$ after perturbation at round 10, returning toward set-point $x^{*}_{\mathcal{H}} = 0.3$ within 5 rounds (P1).}
+\label{fig:elastic}
+\end{minipage}
+\end{figure}
+
+Figure~\ref{fig:sensitivity} shows the elastic-return half-life of subsystem $x_{\mathcal{H}}$ as a function of uniform scaling of $\kappa$ and $\lambda$ over a $\pm 30\%$ range around the smoke-test calibration point. Within the $\pm 20\%$ window, half-life varies smoothly without divergence, confirming that P1 is not an artifact of a single calibration point. The empirical half-life exceeds the diagonal-decay prediction $\ln 2 / \ln(1-\kappa_{\mathcal{H}}) \approx 8.3$ rounds, because the recovery dynamics at the operating point are dominated by the coupling matrix $W$ rather than by diagonal relaxation alone --- the robustness reported here is therefore a system-level property of the coupled $\Gamma$, not a single-parameter robustness of an isolated subsystem.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/fig5_sensitivity.png}
+\caption{P1 sensitivity: elastic-return half-life under $\pm 30\%$ uniform scaling of $\kappa$ (left) and $\lambda$ (right). The grey band marks the $\pm 20\%$ window. Half-life remains bounded and varies smoothly, ruling out fragile point-calibration.}
+\label{fig:sensitivity}
+\end{figure}
+
+\section{NeurIPS paper checklist}
+
+\input{checklist.tex}
+
+\end{document}

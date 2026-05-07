@@ -1,0 +1,9 @@
+{
+  "H1 (Elastic Return)": {
+    "status": "insufficient_data",
+    "n_full": 0,
+    "n_noh": 0
+  },
+  "H2 (Yerkes-Dodson)": {
+    "status": "tested",
+    "h2_supported": 

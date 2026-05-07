@@ -1,0 +1,23 @@
+# Pro-Action Γ Experiment Dependencies
+# Pinned for reproducibility
+
+# Core
+numpy==1.26.4
+scipy==1.11.4
+
+# LLM APIs
+openai==1.40.0
+anthropic==0.34.0
+httpx==0.27.0
+
+# Data/Validation
+pydantic==2.7.0
+
+# Environment
+python-dotenv==1.0.1
+
+# Math verification
+sympy==1.12
+
+# Stats
+statsmodels==0.14.2

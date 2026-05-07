@@ -1,0 +1,124 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+.windsurf/
+*.swp
+*.swo
+*~
+
+# Claude plans
+.claude/
+
+# Build artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+
+# Secrets
+.env
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.bak
+*.log
+runner_output.log
+
+# Runtime state
+budget_state.json
+prompts_cache/
+
+# Internal notes & drafts (not for reviewers)
+notas.md
+conceptual.md
+ecuacion.md
+explicacion_ecuacion.md
+diagrama.md
+abstract_neurips.md
+micro_benchmark.md
+submission_context.md
+paper_reviews_todo.md
+proaction_paper_prev.tex
+neurips_checklist.md
+neurips_guidelines_complete.md
+neurips_submission.tex
+
+# Internal scripts (not needed for reproducibility)
+_inspect.py
+audit_incomplete.py
+audit_meta.py
+audit_results.py
+check_pending.py
+cleanup_incomplete.py
+debug_episode.py
+debug_full_cell.py
+debug_llm.py
+hc.py
+hc2.py
+llm_healthcheck.py
+mini_benchmark.py
+monitor.py
+hypothesis_check.py
+verify_axioms_graph.py
+verify_axioms_judge.py
+verify_axioms_types.py
+verify_axioms_z3.py
+verify_mpmath.py
+verify_symbolic.py
+verify_z3.py
+
+# Internal data/results (not for reviewers)
+axiom_judge_results.json
+axiom_soundness_report.md
+bootstrap_results.json
+hypothesis_results.txt
+simulation.json
+soundness_report.md
+
+# Internal directories
+logs/
+reports/
+reviews/
+research/
+Formatting_Instructions_For_NeurIPS_2026 (1)/
+NeurIPS_2022/
+
+# Old figures (replaced by figures/ dir)
+figure.png
+figure_2.png
+figure_alt.png
+figure_fixed.png
+figure_fixed_4k.png

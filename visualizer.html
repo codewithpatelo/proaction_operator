@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro-Action Γ — Micro-Experiment Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e1a;
+            color: #e0e6ed;
+            overflow: hidden;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+        #overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .panel {
+            background: rgba(10, 14, 26, 0.85);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+        #top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #60a5fa;
+            letter-spacing: 0.5px;
+        }
+        .subtitle {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        #controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        button {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background: rgba(59, 130, 246, 0.35);
+        }
+        button.active {
+            background: rgba(59, 130, 246, 0.5);
+            border-color: #60a5fa;
+        }
+        #timeline-container {
+            width: 100%;
+        }
+        #timeline {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: rgba(100, 150, 255, 0.15);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+        #timeline::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #60a5fa;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+        }
+        #bottom-panels {
+            display: flex;
+            gap: 16px;
+        }
+        .agent-panel {
+            flex: 1;
+            min-width: 280px;
+        }
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.15);
+        }
+        .agent-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .agent-action {
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+        .action-C { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34,197,94,0.4); }
+        .action-D { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+        .thermostat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+        }
+        .thermostat-label {
+            width: 90px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .thermostat-bar-bg {
+            flex: 1;
+            height: 14px;
+            background: rgba(100, 150, 255, 0.1);
+            border-radius: 7px;
+            overflow: hidden;
+            position: relative;
+        }
+        .thermostat-bar {
+            height: 100%;
+            border-radius: 7px;
+            transition: width 0.3s ease, background 0.3s ease;
+            min-width: 2px;
+        }
+        .thermostat-value {
+            width: 45px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(100, 150, 255, 0.1);
+        }
+        .metric-label { color: #94a3b8; }
+        .metric-value { font-family: 'Courier New', monospace; color: #e2e8f0; }
+        #round-info {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        #round-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+        #connection-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 20;
+            display: none;
+        }
+        .loading {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(96, 165, 250, 0.2);
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <div id="connection-status">
+        <div class="loading"></div>
+        <p style="margin-top:12px; color:#94a3b8;">Loading simulation...</p>
+    </div>
+
+    <div id="overlay">
+        <div id="top-bar" class="panel">
+            <div>
+                <h1>Operador de Pro-Acción Γ</h1>
+                <div class="subtitle">2-Agent IPD Simulation · Multi-Thermostat Regulation</div>
+            </div>
+            <div id="controls">
+                <button id="btn-prev" onclick="prevRound()">◀ Prev</button>
+                <button id="btn-play" onclick="togglePlay()">▶ Play</button>
+                <button id="btn-next" onclick="nextRound()">Next ▶</button>
+                <button onclick="resetSim()">↺ Reset</button>
+            </div>
+        </div>
+
+        <div style="flex:1;"></div>
+
+        <div id="timeline-container" class="panel">
+            <div id="round-info">Round <span id="round-number">0</span> / <span id="total-rounds">0</span></div>
+            <input type="range" id="timeline" min="0" max="0" value="0" oninput="seekRound(this.value)">
+        </div>
+
+        <div id="bottom-panels">
+            <div class="panel agent-panel" id="panel-a">
+                <div class="agent-header">
+                    <span class="agent-name" style="color:#60a5fa;">Agent A</span>
+                    <span class="agent-action" id="action-a">-</span>
+                </div>
+                <div id="thermostats-a"></div>
+                <div class="metric-row">
+                    <span class="metric-label">π_fast</span>
+                    <span class="metric-value" id="pifast-a">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Valence</span>
+                    <span class="metric-value" id="valence-a">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Arousal</span>
+                    <span class="metric-value" id="arousal-a">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Payoff</span>
+                    <span class="metric-value" id="payoff-a">-</span>
+                </div>
+            </div>
+            <div class="panel agent-panel" id="panel-b">
+                <div class="agent-header">
+                    <span class="agent-name" style="color:#f472b6;">Agent B</span>
+                    <span class="agent-action" id="action-b">-</span>
+                </div>
+                <div id="thermostats-b"></div>
+                <div class="metric-row">
+                    <span class="metric-label">π_fast</span>
+                    <span class="metric-value" id="pifast-b">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Valence</span>
+                    <span class="metric-value" id="valence-b">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Arousal</span>
+                    <span class="metric-value" id="arousal-b">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Payoff</span>
+                    <span class="metric-value" id="payoff-b">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================================
+        // Three.js Setup
+        // ========================================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0e1a);
+        scene.fog = new THREE.Fog(0x0a0e1a, 10, 50);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 4, 10);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404060, 1.5);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0x6080ff, 1.0);
+        dirLight.position.set(5, 10, 5);
+        scene.add(dirLight);
+        const pointLight = new THREE.PointLight(0x60a5fa, 0.5, 20);
+        pointLight.position.set(-5, 5, 0);
+        scene.add(pointLight);
+        const pointLight2 = new THREE.PointLight(0xf472b6, 0.5, 20);
+        pointLight2.position.set(5, 5, 0);
+        scene.add(pointLight2);
+
+        // Grid floor
+        const gridHelper = new THREE.GridHelper(30, 30, 0x1e293b, 0x0f172a);
+        scene.add(gridHelper);
+
+        // ========================================================
+        // Agent 3D Objects
+        // ========================================================
+        const THERMOSTAT_NAMES = ['A', 'P', 'H', 'E', 'N', 'C'];
+        const THERMOSTAT_COLORS = [
+            0xf59e0b,  // A - amber (attention)
+            0x3b82f6,  // P - blue (perception)
+            0xef4444,  // H - red (hormonal)
+            0xec4899,  // E - pink (emotion)
+            0x8b5cf6,  // N - violet (neuro)
+            0x10b981,  // C - emerald (cognition)
+        ];
+        const THERMOSTAT_LABELS = ['Attention', 'Perception', 'Hormonal', 'Emotional', 'Neuro', 'Cognitive'];
+
+        function createAgent(name, xPos, color) {
+            const group = new THREE.Group();
+
+            // Core sphere
+            const coreGeo = new THREE.SphereGeometry(1.2, 32, 32);
+            const coreMat = new THREE.MeshPhysicalMaterial({
+                color: color,
+                metalness: 0.3,
+                roughness: 0.2,
+                transparent: true,
+                opacity: 0.9,
+                emissive: color,
+                emissiveIntensity: 0.1,
+            });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            group.add(core);
+
+            // Inner glow
+            const glowGeo = new THREE.SphereGeometry(1.4, 32, 32);
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.BackSide,
+            });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            group.add(glow);
+
+            // Thermostat rings (orbiting)
+            const rings = [];
+            for (let i = 0; i < 6; i++) {
+                const radius = 2.0 + i * 0.35;
+                const tube = 0.08 + Math.abs(0) * 0.02; // will update dynamically
+                const ringGeo = new THREE.TorusGeometry(radius, tube, 16, 64);
+                const ringMat = new THREE.MeshPhysicalMaterial({
+                    color: THERMOSTAT_COLORS[i],
+                    metalness: 0.5,
+                    roughness: 0.3,
+                    transparent: true,
+                    opacity: 0.7,
+                    emissive: THERMOSTAT_COLORS[i],
+                    emissiveIntensity: 0.3,
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2 + (i % 2) * 0.3;
+                ring.rotation.y = (i / 6) * Math.PI;
+                group.add(ring);
+                rings.push({ mesh: ring, baseRadius: radius, index: i });
+            }
+
+            // Label sprite
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(0,0,0,0)';
+            ctx.fillRect(0, 0, 256, 64);
+            ctx.font = 'bold 36px sans-serif';
+            ctx.fillStyle = '#e0e6ed';
+            ctx.textAlign = 'center';
+            ctx.fillText(name, 128, 44);
+            const tex = new THREE.CanvasTexture(canvas);
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            sprite.position.y = 2.5;
+            sprite.scale.set(3, 0.75, 1);
+            group.add(sprite);
+
+            group.position.set(xPos, 1.5, 0);
+            scene.add(group);
+
+            return { group, core, glow, rings, baseColor: color };
+        }
+
+        const agentA = createAgent('Agent A', -4, 0x60a5fa);
+        const agentB = createAgent('Agent B', 4, 0xf472b6);
+
+        // Connection beam between agents
+        const beamGeo = new THREE.CylinderGeometry(0.05, 0.05, 1, 8);
+        const beamMat = new THREE.MeshBasicMaterial({
+            color: 0x60a5fa,
+            transparent: true,
+            opacity: 0.3,
+        });
+        const beam = new THREE.Mesh(beamGeo, beamMat);
+        beam.rotation.z = Math.PI / 2;
+        beam.position.set(0, 1.5, 0);
+        beam.scale.x = 8;
+        scene.add(beam);
+
+        // Particles for interaction
+        const particleCount = 50;
+        const particlesGeo = new THREE.BufferGeometry();
+        const pPositions = new Float32Array(particleCount * 3);
+        const pColors = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            pPositions[i*3] = (Math.random() - 0.5) * 8;
+            pPositions[i*3+1] = 1.5 + (Math.random() - 0.5) * 2;
+            pPositions[i*3+2] = (Math.random() - 0.5) * 2;
+            pColors[i*3] = 0.4; pColors[i*3+1] = 0.65; pColors[i*3+2] = 1.0;
+        }
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+        particlesGeo.setAttribute('color', new THREE.BufferAttribute(pColors, 3));
+        const particlesMat = new THREE.PointsMaterial({
+            size: 0.08,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.6,
+        });
+        const particles = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particles);
+
+        // ========================================================
+        // Simulation Data
+        // ========================================================
+        let simData = null;
+        let currentRound = 0;
+        let isPlaying = false;
+        let playInterval = null;
+
+        const statusEl = document.getElementById('connection-status');
+        statusEl.style.display = 'block';
+
+        fetch('simulation.json')
+            .then(r => r.json())
+            .then(data => {
+                simData = data;
+                statusEl.style.display = 'none';
+                document.getElementById('total-rounds').textContent = data.rounds;
+                document.getElementById('timeline').max = data.rounds - 1;
+                initThermostatBars();
+                updateView(0);
+            })
+            .catch(err => {
+                statusEl.innerHTML = '<p style="color:#f87171;">Failed to load simulation.json<br>Run: python simulator.py</p>';
+                console.error(err);
+            });
+
+        function initThermostatBars() {
+            const makeBar = (id) => {
+                const container = document.getElementById(id);
+                THERMOSTAT_NAMES.forEach((name, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'thermostat-row';
+                    row.innerHTML = `
+                        <span class="thermostat-label">${name}</span>
+                        <div class="thermostat-bar-bg">
+                            <div class="thermostat-bar" id="bar-${id}-${i}" style="width:0%;background:#${THERMOSTAT_COLORS[i].toString(16).padStart(6,'0')}"></div>
+                        </div>
+                        <span class="thermostat-value" id="val-${id}-${i}">0.00</span>
+                    `;
+                    container.appendChild(row);
+                });
+            };
+            makeBar('thermostats-a');
+            makeBar('thermostats-b');
+        }
+
+        function updateView(roundIdx) {
+            if (!simData) return;
+            currentRound = Math.max(0, Math.min(roundIdx, simData.rounds - 1));
+
+            const h1 = simData.agent1.history[currentRound];
+            const h2 = simData.agent2.history[currentRound];
+
+            document.getElementById('round-number').textContent = currentRound + 1;
+            document.getElementById('timeline').value = currentRound;
+
+            // Update 3D agents
+            updateAgent3D(agentA, h1);
+            updateAgent3D(agentB, h2);
+
+            // Update connection
+            const bothCoop = h1.action === 'C' && h2.action === 'C';
+            const bothDef = h1.action === 'D' && h2.action === 'D';
+            beamMat.color.setHex(bothCoop ? 0x4ade80 : bothDef ? 0xf87171 : 0xfbbf24);
+            beamMat.opacity = 0.2 + 0.3 * (h1.pi_fast + h2.pi_fast) / 2;
+
+            // Update DOM panels
+            updatePanel('a', h1, 0x60a5fa);
+            updatePanel('b', h2, 0xf472b6);
+        }
+
+        function updateAgent3D(agent, hist) {
+            // Core color based on valence
+            const valence = hist.valence;
+            const arousal = hist.arousal;
+            const r = valence > 0 ? 0.2 + arousal * 0.3 : 0.5 + arousal * 0.3;
+            const g = valence > 0 ? 0.7 + arousal * 0.2 : 0.2 + arousal * 0.1;
+            const b = valence > 0 ? 0.4 : 0.5;
+            agent.core.material.color.setRGB(r, g, b);
+            agent.core.material.emissive.setRGB(r*0.5, g*0.5, b*0.5);
+            agent.glow.material.color.setRGB(r, g, b);
+
+            // Scale core by arousal
+            const scale = 1.0 + arousal * 0.3;
+            agent.core.scale.setScalar(scale);
+            agent.glow.scale.setScalar(scale + 0.2);
+
+            // Update rings (thermostats)
+            hist.x.forEach((val, i) => {
+                const ring = agent.rings[i];
+                const absVal = Math.abs(val);
+                const normVal = Math.min(absVal / 2.0, 1.0);
+
+                // Radius pulsates with value
+                const newRadius = ring.baseRadius + normVal * 0.3;
+                ring.mesh.geometry.dispose();
+                ring.mesh.geometry = new THREE.TorusGeometry(newRadius, 0.05 + normVal * 0.05, 16, 64);
+
+                // Emissive intensity
+                ring.mesh.material.emissiveIntensity = 0.2 + normVal * 0.6;
+                ring.mesh.material.opacity = 0.4 + normVal * 0.4;
+
+                // Rotation speed
+                ring.mesh.rotation.z += 0.005 + normVal * 0.02;
+            });
+
+            // Fast route indicator: ring tilt
+            if (hist.pi_fast > 0.6) {
+                agent.rings.forEach(r => {
+                    r.mesh.rotation.x = Math.PI / 2 + 0.5;
+                });
+            } else {
+                agent.rings.forEach((r, i) => {
+                    r.mesh.rotation.x = Math.PI / 2 + (i % 2) * 0.3;
+                });
+            }
+        }
+
+        function updatePanel(suffix, hist, colorHex) {
+            const actionEl = document.getElementById(`action-${suffix}`);
+            actionEl.textContent = hist.action;
+            actionEl.className = `agent-action action-${hist.action}`;
+
+            document.getElementById(`pifast-${suffix}`).textContent = hist.pi_fast.toFixed(3);
+            document.getElementById(`valence-${suffix}`).textContent = hist.valence.toFixed(3);
+            document.getElementById(`arousal-${suffix}`).textContent = hist.arousal.toFixed(3);
+            document.getElementById(`payoff-${suffix}`).textContent = (hist.payoff ?? 0).toString();
+
+            hist.x.forEach((val, i) => {
+                const bar = document.getElementById(`bar-thermostats-${suffix}-${i}`);
+                const valEl = document.getElementById(`val-thermostats-${suffix}-${i}`);
+                const pct = Math.min(Math.abs(val) / 2.0 * 100, 100);
+                bar.style.width = pct + '%';
+                bar.style.background = `#${THERMOSTAT_COLORS[i].toString(16).padStart(6,'0')}`;
+                bar.style.opacity = 0.3 + (pct / 100) * 0.7;
+                valEl.textContent = val.toFixed(2);
+            });
+        }
+
+        // ========================================================
+        // Controls
+        // ========================================================
+        function prevRound() {
+            if (currentRound > 0) updateView(currentRound - 1);
+        }
+        function nextRound() {
+            if (currentRound < (simData?.rounds ?? 1) - 1) updateView(currentRound + 1);
+        }
+        function seekRound(val) {
+            updateView(parseInt(val));
+        }
+        function togglePlay() {
+            const btn = document.getElementById('btn-play');
+            if (isPlaying) {
+                clearInterval(playInterval);
+                isPlaying = false;
+                btn.textContent = '▶ Play';
+                btn.classList.remove('active');
+            } else {
+                isPlaying = true;
+                btn.textContent = '⏸ Pause';
+                btn.classList.add('active');
+                playInterval = setInterval(() => {
+                    if (currentRound >= (simData?.rounds ?? 1) - 1) {
+                        togglePlay();
+                        return;
+                    }
+                    updateView(currentRound + 1);
+                }, 800);
+            }
+        }
+        function resetSim() {
+            if (isPlaying) togglePlay();
+            updateView(0);
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevRound();
+            if (e.key === 'ArrowRight') nextRound();
+            if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+        });
+
+        // ========================================================
+        // Animation Loop
+        // ========================================================
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            // Rotate agents slowly
+            agentA.group.rotation.y = Math.sin(time * 0.3) * 0.2;
+            agentB.group.rotation.y = Math.cos(time * 0.3) * 0.2;
+
+            // Float
+            agentA.group.position.y = 1.5 + Math.sin(time * 0.5) * 0.1;
+            agentB.group.position.y = 1.5 + Math.cos(time * 0.5) * 0.1;
+
+            // Particles
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i*3] += Math.sin(time + i) * 0.005;
+                positions[i*3+1] += Math.cos(time * 0.7 + i) * 0.003;
+                if (Math.abs(positions[i*3]) > 4) positions[i*3] *= -0.9;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+
+            // Camera subtle orbit
+            camera.position.x = Math.sin(time * 0.1) * 2;
+            camera.lookAt(0, 1.5, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
