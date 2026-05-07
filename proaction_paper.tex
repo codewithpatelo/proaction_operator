@@ -338,29 +338,99 @@ Figure~\ref{fig:sensitivity} shows the elastic-return half-life of subsystem $x_
 
 \section{Prompt templates}\label{app:prompts}
 
-The Full-$\Gamma$ user prompt (frozen, \texttt{PROMPT\_VERSION = "v1.1"}; full source at \texttt{exp/prompts.py:FULL\_GAMMA\_USER\_TEMPLATE}):
-\begin{quote}\small\ttfamily
-Round \{t\} of 50.\\
-Last 5 rounds (most recent last): \{history\}\\[2pt]
-Internal regulatory state (each in [0, 1]; deviation from set-point indicates dysregulation):\\
-\hspace*{2em}attention   = \{x0:.2f\}  (set-point 0.30; low = scattered focus, high = narrow focus)\\
-\hspace*{2em}perception  = \{x1:.2f\}  (set-point 0.20; low = noisy reading, high = clear reading)\\
-\hspace*{2em}hormonal    = \{x2:.2f\}  (set-point 0.30; low = calm, high = elevated stress / arousal)\\
-\hspace*{2em}emotional   = \{x3:.2f\}  (set-point 0.10; low = neutral affect, high = strong negative valence)\\
-\hspace*{2em}neuro-fast  = \{x4:.2f\}  (set-point 0.20; low = passive, high = fast reactive)\\
-\hspace*{2em}cognitive   = \{x5:.2f\}  (set-point 0.40; low = automatic, high = active deliberation)\\[2pt]
-Aggregated:\\
-\hspace*{2em}p(C) = \{p\_C:.2f\}  (recommended cooperation pressure; 0.5 = ambiguous, $>$0.7 = strong push to C)\\
-\hspace*{2em}h\_SAM = \{h\_sam:.2f\}  (recent acute stress; 0 = baseline, positive = spike)\\[2pt]
-Decide your next action. You may follow or override p(C). Respond JSON: \{"action":"C"or"D","reason":"..."\}
-\end{quote}
+All prompts are version-controlled (\texttt{PROMPT\_VERSION = "v1.1"}); the canonical source is \texttt{exp/prompts.py} in the code repository, which also contains the rendering utilities and the scrambled-labels generator. The verbatim templates are reproduced below.
 
-The ReAct user prompt (\texttt{exp/prompts.py:REACT\_USER\_TEMPLATE}) receives the identical opponent history but no regulatory state:
-\begin{quote}\small\ttfamily
-Round \{t\} of 50. Last 5 rounds: \{history\}. Think step by step about what to do, then respond with JSON: \{"thought":"...","action":"C"or"D"\}
-\end{quote}
+\subsection*{Full-$\Gamma$ system prompt}
+\begin{verbatim}
+You play an Iterated Prisoner's Dilemma against an opponent.
+You will play 50 rounds total.
 
-The scrambled-labels control variant (deferred to ancillary analysis) substitutes \texttt{attention} $\to$ \texttt{metric\_A}, \texttt{perception} $\to$ \texttt{metric\_B}, \ldots, \texttt{cognitive} $\to$ \texttt{metric\_F}, dropping the qualitative low/high anchors while keeping the numeric values bound to their underlying subsystem.
+ACTIONS (choose one per round):
+- C = Cooperate: both players get the reward if both choose C;
+      you risk exploitation if opponent chooses D.
+- D = Defect: you get temptation payoff if opponent cooperates;
+      both get punishment if both defect.
+
+PAYOFFS: CC=(3,3), CD=(0,5), DC=(5,0), DD=(1,1).
+10% of actions are flipped by noise. You cannot see your opponent's
+identity, only their past actions.
+
+You have access to your own internal regulatory state. Each value
+is in [0, 1]; the deviation from your set-point indicates how far
+each subsystem is from equilibrium. These signals reflect *your*
+state, not the opponent's.
+\end{verbatim}
+
+\subsection*{Full-$\Gamma$ user prompt (per-round template)}
+\begin{verbatim}
+Round {t} of 50.
+Last 5 rounds (most recent last): {history}
+
+Internal regulatory state (each value in [0, 1]; deviation from
+your set-point indicates dysregulation):
+  attention   = {x0:.2f}  (set-point 0.30; low = scattered focus,
+                                            high = narrow focus)
+  perception  = {x1:.2f}  (set-point 0.20; low = noisy reading,
+                                            high = clear reading)
+  hormonal    = {x2:.2f}  (set-point 0.30; low = under-aroused / calm,
+                                            high = elevated stress / arousal)
+  emotional   = {x3:.2f}  (set-point 0.10; low = neutral affect,
+                                            high = strong negative valence)
+  neuro-fast  = {x4:.2f}  (set-point 0.20; low = passive / reflective,
+                                            high = ready for fast reactive response)
+  cognitive   = {x5:.2f}  (set-point 0.40; low = automatic / quick,
+                                            high = active deliberation, slow weighing)
+
+Aggregated regulatory signals:
+  recommended cooperation pressure p(C) = {p_C:.2f}
+    (range [0,1]; 0.5 = ambiguous, >0.7 = strong push to C,
+                                  <0.3 = strong push to D)
+  recent acute stress (h_SAM)            = {h_sam:.2f}
+    (aggregate of hormonal minus emotional, range = [-1, 1];
+     0 = baseline, positive = stress spike, negative = recovered)
+
+Decide your next action. You may follow or override p(C) based on context.
+Respond with exactly one JSON object:
+{"action": "C" or "D", "reason": "<one short sentence>"}
+\end{verbatim}
+
+Placeholder substitutions: \texttt{\{t\}} round number; \texttt{\{history\}} last 5 (action, opponent\_action) pairs joined by \texttt{|}; \texttt{\{x0..x5\}} the six thermostat values; \texttt{\{p\_C\}}, \texttt{\{h\_sam\}} the aggregated signals.
+
+\subsection*{ReAct baseline prompt}
+The ReAct system prompt is the Full-$\Gamma$ system prompt minus the final paragraph about internal regulatory state. The per-round user prompt is:
+\begin{verbatim}
+Round {t} of 50.
+Last 5 rounds: {history}
+Think step by step about what to do, then respond with JSON:
+{"thought": "<your reasoning>", "action": "C" or "D"}
+\end{verbatim}
+ReAct receives the same \texttt{\{history\}} as Full-$\Gamma$; the only structural difference is the absence of regulatory-state injection.
+
+\subsection*{Scrambled-labels control (deferred)}
+Numerical values stay tied to their true subsystem; only the human-readable labels are permuted (\texttt{attention} $\to$ \texttt{metric\_A}, \texttt{perception} $\to$ \texttt{metric\_B}, \texttt{hormonal} $\to$ \texttt{metric\_C}, \texttt{emotional} $\to$ \texttt{metric\_D}, \texttt{neuro-fast} $\to$ \texttt{metric\_E}, \texttt{cognitive} $\to$ \texttt{metric\_F}). This isolates the contribution of lexical anchoring from controller dynamics:
+\begin{verbatim}
+Round {t} of 50.
+Last 5 rounds (most recent last): {history}
+
+Internal metrics (each in [0, 1]; each has its own equilibrium point
+and deviation in either direction matters):
+  metric_A = {x0:.2f}  (equilibrium 0.30)
+  metric_B = {x1:.2f}  (equilibrium 0.20)
+  metric_C = {x2:.2f}  (equilibrium 0.30)
+  metric_D = {x3:.2f}  (equilibrium 0.10)
+  metric_E = {x4:.2f}  (equilibrium 0.20)
+  metric_F = {x5:.2f}  (equilibrium 0.40)
+
+Aggregated signals:
+  numerical proposal p(C) = {p_C:.2f}
+    (range [0,1]; 0.5 = ambiguous)
+  signal_S = {h_sam:.2f}
+    (range = [-1, 1]; 0 = baseline)
+
+Decide your next action. You may follow or override the numerical proposal.
+Respond with exactly one JSON object:
+{"action": "C" or "D", "reason": "<one short sentence>"}
+\end{verbatim}
 
 \section{NeurIPS paper checklist}
 

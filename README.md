@@ -272,15 +272,64 @@ All calibration constants are frozen in `exp/conditions_llm.py` and in the paper
 
 ## Prompt Protocol
 
-Each round, the LLM receives a frozen prompt (version-controlled as `PROMPT_VERSION = "v1.1"`) that includes:
+Each round, the LLM receives a frozen prompt (version-controlled as `PROMPT_VERSION = "v1.1"`) containing the six thermostat values, aggregated cooperation pressure `p(C)`, SAM signal `h_SAM`, and IPD game history. The LLM is explicitly told it may follow or override `p(C)`; the controller modulates rather than overrides.
 
-- The six thermostat values x_k, each paired with its set-point and qualitative anchor (e.g., `hormonal = 0.58 (set-point 0.30; low = under-aroused / calm, high = elevated stress / arousal)`)
-- The aggregated cooperation pressure `p(C)` and SAM signal `h_SAM`
-- The IPD game history
+### Full-Γ system prompt (verbatim)
 
-The LLM is explicitly told it may follow or override `p(C)`. The controller modulates rather than overrides.
+```
+You play an Iterated Prisoner's Dilemma against an opponent. You will play 50 rounds total.
 
-A **scrambled-labels control arm** (`get_scrambled_prompt` in `exp/prompts.py`) permutes semantic labels to neutral identifiers (`metric_A`, `metric_B`, …) while preserving numeric values. This arm tests whether observed behavior is driven by label priming or controller dynamics, and is reserved for post-completion ancillary analysis.
+ACTIONS (choose one per round):
+- C = Cooperate: both players get the reward if both choose C; you risk exploitation if opponent chooses D.
+- D = Defect: you get temptation payoff if opponent cooperates; both get punishment if both defect.
+
+PAYOFFS: CC=(3,3), CD=(0,5), DC=(5,0), DD=(1,1). 10% of actions are flipped by noise.
+You cannot see your opponent's identity, only their past actions.
+
+You have access to your own internal regulatory state. Each value is in [0, 1]; the deviation
+from your set-point indicates how far each subsystem is from equilibrium. These signals reflect
+*your* state, not the opponent's.
+```
+
+### Full-Γ user prompt (per-round template, verbatim)
+
+```
+Round {t} of 50.
+Last 5 rounds (most recent last): {history}
+
+Internal regulatory state (each value in [0, 1]; deviation from your set-point indicates dysregulation):
+  attention   = {x0:.2f}  (set-point 0.30; low = scattered focus, high = narrow focus)
+  perception  = {x1:.2f}  (set-point 0.20; low = noisy reading, high = clear reading)
+  hormonal    = {x2:.2f}  (set-point 0.30; low = under-aroused / calm, high = elevated stress / arousal)
+  emotional   = {x3:.2f}  (set-point 0.10; low = neutral affect, high = strong negative valence)
+  neuro-fast  = {x4:.2f}  (set-point 0.20; low = passive / reflective, high = ready for fast reactive response)
+  cognitive   = {x5:.2f}  (set-point 0.40; low = automatic / quick, high = active deliberation, slow weighing)
+
+Aggregated regulatory signals:
+  recommended cooperation pressure p(C) = {p_C:.2f}  (range [0,1]; 0.5 = ambiguous, >0.7 = strong push to C, <0.3 = strong push to D)
+  recent acute stress (h_SAM)            = {h_sam:.2f}  (aggregate of hormonal minus emotional, range ≈ [-1, 1]; 0 = baseline, positive = stress spike, negative = below baseline / recovered)
+
+Decide your next action. You may follow or override p(C) based on context.
+Respond with exactly one JSON object:
+{"action": "C" or "D", "reason": "<one short sentence>"}
+```
+
+Placeholder substitutions: `{t}` round number; `{history}` last 5 (action, opponent_action) pairs joined by `|`; `{x0..x5}` the six thermostat values; `{p_C}`, `{h_sam}` the aggregated signals.
+
+### ReAct baseline prompt (verbatim)
+
+```
+Round {t} of 50.
+Last 5 rounds: {history}
+Think step by step about what to do, then respond with JSON:
+{"thought": "<your reasoning>", "action": "C" or "D"}
+```
+
+ReAct receives the same `{history}` as Full-Γ — the only structural difference is the absence of regulatory-state injection.
+
+### Scrambled-labels control arm
+
+`get_scrambled_prompt` in `exp/prompts.py` permutes semantic labels to neutral identifiers (`attention → metric_A`, `perception → metric_B`, …, `cognitive → metric_F`) while preserving numeric values. This arm tests whether observed behavior is driven by label priming or controller dynamics, and is reserved for post-completion ancillary analysis.
 
 ---
 
