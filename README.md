@@ -31,6 +31,7 @@ ecuacion_proaccion/
 ├── LICENSE                      # Code license
 ├── requirements.txt             # Python dependencies
 ├── Makefile                     # Convenience targets
+├── manim_proaction_operator.py  # Optional explanatory animation script
 │
 ├── exp/
 │   ├── runner.py                # Main benchmark runner and Γ update
@@ -130,6 +131,28 @@ python analyze_hypothesis_tests.py
 ```
 
 See `reproducibility.md` for more detailed commands and environment notes.
+
+## Optional Manim visualization
+
+The repository includes `manim_proaction_operator.py`, an optional explanatory animation of the Γ update and IPD benchmark loop. This animation is for communication and project-page use; it is **not** part of the empirical evidence reported in the paper.
+
+Install Manim separately if needed:
+
+```bash
+pip install manim
+```
+
+Render a preview:
+
+```bash
+manim -pql manim_proaction_operator.py ProActionOperatorScene
+```
+
+Render a higher-quality version:
+
+```bash
+manim -pqh manim_proaction_operator.py ProActionOperatorScene
+```
 
 ## API keys
 

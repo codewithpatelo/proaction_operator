@@ -65,6 +65,7 @@ reports/
 *.bbl
 *.blg
 *.out
+media/
 proaction_paper_preprint.*
 
 # Old venue formats, templates, and previous paper versions
@@ -159,8 +160,9 @@ figures/fig_arch.png
 !proaction_paper_icml.tex
 !proaction_paper_icml.pdf
 !referencias.bib
-!icml2026.sty
-!icml2026.bst
+!icml2025.sty
+!icml2025.bst
+!manim_proaction_operator.py
 !exp/
 !exp/*.py
 !tests/
