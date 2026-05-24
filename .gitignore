@@ -133,7 +133,10 @@ hypothesis_tests.json
 recovery_tests.json
 simulation.json
 results/random_gamma_sweep.json
+results/hypotheses.json
+results/results_pc_only_misimplemented.csv
 checkpoints/cells_bck.json
+checkpoints/cells_pc_only_misimplemented.json
 checkpoints/run_*/
 
 # Unused figures / image drafts
@@ -185,6 +188,5 @@ figures/fig_arch.png
 !results/
 !results/results.csv
 !results/bfi.json
-!results/hypotheses.json
 !figures/
 !figures/fig1_thermostats.png

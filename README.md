@@ -1,6 +1,6 @@
 ﻿# The Pro-Action Operator Γ — ICML 2025 Supplementary Material
 
-![Pro-Action operator animation](assets/proaction_operator_demo.gif)
+<video src="assets/proaction_operator_demo.mp4" width="720" controls></video>
 
 This repository contains the anonymous supplementary material for:
 
