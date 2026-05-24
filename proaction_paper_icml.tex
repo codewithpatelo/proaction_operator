@@ -254,18 +254,22 @@ W =
 \end{bmatrix}.
 \end{equation}
 
-\begin{figure}[t]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\columnwidth]{figures/fig1_thermostats.png}
+\includegraphics[width=.92\textwidth]{figures/fig1_thermostats.png}
 \caption{Subsystem thermostat trajectories for two agents in IPD with noise. The internal perturbation at round 10 triggers a transient deviation, followed by an elastic return toward set points.}
 \label{fig:thermostats}
 \end{figure}
+
+\clearpage
 
 \section{Prompt templates}\label{app:prompts}
 
 All prompts are version-controlled (\texttt{PROMPT\_VERSION = "v1.1"}); the canonical source is \texttt{exp/prompts.py} in the code repository, which also contains the rendering utilities and the scrambled-labels generator. The verbatim templates are reproduced below.
 
 \subsection*{Full-$\Gamma$ system prompt}
+\begingroup
+\footnotesize
 \begin{verbatim}
 You play an Iterated Prisoner's Dilemma against an opponent.
 You will play 50 rounds total.
@@ -285,9 +289,12 @@ is in [0, 1]; the deviation from your set-point indicates how far
 each subsystem is from equilibrium. These signals reflect *your*
 state, not the opponent's.
 \end{verbatim}
+\endgroup
 
 \subsection*{Full-$\Gamma$ RSVI user prompt}
 This per-round user prompt is the concrete implementation of Regulatory State Verbalized Interoception (RSVI): the controller's numerical state is translated into readable regulatory context and supplied to the LLM without directly prescribing the next action.
+\begingroup
+\footnotesize
 \begin{verbatim}
 Round {t} of 50.
 Last 5 rounds (most recent last): {history}
@@ -317,19 +324,23 @@ Aggregated regulatory signals:
 
 Decide your next action. You may follow or override p(C) based on context.
 Respond with exactly one JSON object:
-{"action": "C" or "D", "reason": "<one short sentence>"}
+{"action":"C|D","reason":"<one short sentence>"}
 \end{verbatim}
+\endgroup
 
 Placeholder substitutions: \texttt{\{t\}} round number; \texttt{\{history\}} last 5 (action, opponent\_action) pairs joined by \texttt{|}; \texttt{\{x0..x5\}} the six thermostat values; \texttt{\{p\_C\}}, \texttt{\{h\_sam\}} the aggregated signals.
 
 \subsection*{ReAct baseline prompt}
 The ReAct system prompt is the Full-$\Gamma$ system prompt minus the final paragraph about internal regulatory state. The per-round user prompt is:
+\begingroup
+\footnotesize
 \begin{verbatim}
 Round {t} of 50.
 Last 5 rounds: {history}
 Think step by step about what to do, then respond with JSON:
 {"thought": "<your reasoning>", "action": "C" or "D"}
 \end{verbatim}
+\endgroup
 ReAct receives the same \texttt{\{history\}} as Full-$\Gamma$; the only structural difference is the absence of regulatory-state injection.
 
 \end{document}
