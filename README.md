@@ -1,4 +1,4 @@
-﻿# The Pro-Action Operator Γ — ICML 2026 Supplementary Material
+﻿# The Pro-Action Operator Γ — ICML 2025 Supplementary Material
 
 This repository contains the anonymous supplementary material for:
 
@@ -24,8 +24,8 @@ ecuacion_proaccion/
 ├── proaction_paper_icml.tex      # Submitted ICML paper source
 ├── proaction_paper_icml.pdf      # Compiled paper PDF
 ├── referencias.bib              # Bibliography
-├── icml2026.sty                 # ICML style file
-├── icml2026.bst                 # ICML bibliography style
+├── icml2025.sty                 # ICML style file
+├── icml2025.bst                 # ICML bibliography style
 ├── README.md                    # This file
 ├── reproducibility.md           # Command-oriented reproduction guide
 ├── LICENSE                      # Code license
@@ -200,4 +200,4 @@ Each model is held fixed across conditions. Provider-level summaries are diagnos
 
 All AI-generated content was reviewed and edited by human authors who assume full responsibility for all scientific claims, citations, experimental design, and code. No AI tool was used to generate core scientific claims without human verification.
 
-This disclosure follows the ICML 2026 LLM usage policy. The use of AI tools for writing and development is declared and does not affect the core scientific methodology, which was designed and verified independently.
+This disclosure follows the ICML 2025 LLM usage policy. The use of AI tools for writing and development is declared and does not affect the core scientific methodology, which was designed and verified independently.

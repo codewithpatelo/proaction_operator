@@ -30,7 +30,6 @@ for idx, (ax, sub, col) in enumerate(zip(axes.flat, subs, colors)):
     if idx == 0:
         ax.legend(fontsize=7)
 axes[-1, -1].set_xlabel('Round')
-fig.suptitle('Subsystem thermostat trajectories (IPD with noise)', fontsize=11)
 plt.tight_layout()
 plt.savefig('figures/fig1_thermostats.png', dpi=150, bbox_inches='tight')
 print('Saved figures/fig1_thermostats.png')

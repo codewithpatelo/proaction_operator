@@ -1,6 +1,6 @@
 \documentclass{article}
 
-\usepackage{icml2026}
+\usepackage{icml2025}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -19,6 +19,7 @@
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{proposition}{Proposition}
+\newtheorem{assumption}{Assumption}[section]
 
 \begin{document}
 
@@ -36,7 +37,7 @@
 \printAffiliationsAndNotice{}
 
 \begin{abstract}
-Autonomous LLM agents are increasingly being deployed in high-stakes domains such as health triage, financial advice, and public deliberation, where reliability depends not only on what they can do, but on how they decide when to act, wait, defer, or escalate. Existing architectures delegate this activation problem to external orchestrators --- graphs, queues, or heartbeats --- rather than to an endogenous regulatory process. We introduce the \textbf{Pro-Action operator} $\Gamma$, a six-subsystem coupled thermostat used as a \textit{regulatory harness} for LLM policy execution: $\Gamma$ computes an inspectable internal regulatory state, and \textit{Regulatory State Verbalized Interoception} (RSVI) injects that state into the prompt as numerical thermostat values, set-points, and qualitative anchors without directly prescribing the action. In a 920-cell iterated prisoner's dilemma benchmark across three providers, Full-$\Gamma$ exhibits opponent-differentiated cooperation, especially against Grim versus reciprocal opponents. These results support the feasibility of coupling LLM policy execution to explicit regulatory state; stronger claims about architectural necessity, lexical priming, payoff improvement, and generalization beyond this task require additional matched controls and future evaluation.
+Autonomous LLM agents are increasingly deployed in high-stakes settings where reliability depends not only on what they can do, but on how they decide when to act, wait, defer, or escalate. Existing architectures usually delegate this activation problem to external orchestrators, rather than to an endogenous regulatory process. We introduce the \textbf{Pro-Action operator} $\Gamma$, a six-subsystem coupled thermostat used as a \textit{regulatory harness} for LLM policy execution, together with \textit{Regulatory State Verbalized Interoception} (RSVI), which exposes regulatory state to the prompt without directly prescribing actions. In a 920-cell iterated prisoner's dilemma benchmark across three providers, Full-$\Gamma$ exhibits opponent-differentiated cooperation, especially against Grim versus reciprocal opponents. These results support the feasibility of coupling LLM policy execution to explicit regulatory state, while architectural necessity, lexical priming, payoff improvement, and generalization beyond this task remain matters for further studies with matched controls.
 \end{abstract}
 
 \section{Introduction}
@@ -45,7 +46,7 @@ The deployment of LLM-based autonomous agents into settings of institutional con
 
 Emerging evidence in the LLM-agent literature supports this concern: agents tend to lose activation coherence over extended interaction --- context collapse \citep{liu2024lost}, behavioral drift \citep{rath2026agentdrift}, and interventions decoupled from any internal state the agent could be said to carry. The pattern suggests that \textit{when} an agent acts may depend on structure the dominant paradigm may implicitly leave unmodelled.
 
-Contemporary LLM-agent frameworks --- ReAct, LangGraph, OpenClaw --- have prioritized \textit{capability} (what an agent can do) over \textit{motivation} (why and when it should act at all), addressing activation via cognitive while-loops and exogenous flow control. This is not a failure of those frameworks on their own terms: graphs, supervisors, and action loops were a necessary engineering progress to make LLMs operational. Their ceiling is different. They can coordinate when an LLM is called, but they do not give the agent an internal regulatory state whose trajectory can itself be inspected, perturbed, or conditioned on. The success of LLMs has made next-token prediction a dominant reference model, but biological systems do not reduce action to local prediction: predicting, remembering, and acting are organized by multi-level regulatory architecture \citep{zou2026constituent}. Homeostatic reinforcement learning (Keramati--Gutkin 2014) and active-inference agents (Friston 2017; Tschantz et al.\ 2020) internalize regulation, but do not provide a compact LLM-agent operator in which attention, interoception, emotion, memory, cognition, and stress-like physiology are all explicit regulators. Intelligent animals, including humans, regulate behavior through multiple interacting systems --- attention, arousal, affect, memory, deliberation --- operating on distinct timescales whose relative priorities shift with context; dominant LLM-agent paradigms treat activation as a single-objective signal or as an exogenous flow-control mechanism.
+Contemporary LLM-agent frameworks --- ReAct, LangGraph, OpenClaw --- have prioritized \textit{capability} (what an agent can do) over \textit{motivation} (why and when it should act at all), addressing activation via cognitive while-loops and exogenous flow control. This is not a failure of those frameworks on their own terms: graphs, supervisors, and action loops were a necessary engineering progress to make LLMs operational. Their ceiling is different. They can coordinate when an LLM is called, but they do not give the agent an internal regulatory state whose trajectory can itself be inspected, perturbed, or conditioned on. The success of LLMs has made next-token prediction a dominant reference model, but biological systems do not reduce action to local prediction: predicting, remembering, and acting are organized by multi-level regulatory architecture \citep{zou2026constituent}. Homeostatic reinforcement learning \citep{keramati2014homeostatic} and active-inference agents \citep{friston2017active,tschantz2020scaling} internalize regulation, but do not provide a compact LLM-agent operator in which attention, interoception, emotion, memory, cognition, and stress-like physiology are all explicit regulators. Intelligent animals, including humans, regulate behavior through multiple interacting systems --- attention, arousal, affect, memory, deliberation --- operating on distinct timescales whose relative priorities shift with context; dominant LLM-agent paradigms treat activation as a single-objective signal or as an exogenous flow-control mechanism.
 
 The problem is older than LLM agents. Mid-20th century behaviorism defined it precisely by bracketing it: the stimulus--response mapping could be studied scientifically because the intervening machinery --- the \textit{black box} --- was deliberately left unspecified. Decades of subsequent research opened that box from different angles: behavioral biology established that animal regulation is multi-drive and hierarchical; stress physiology revealed fast (adrenergic, seconds) and slow (cortisol, minutes) regulation axes with distinct roles; affective neuroscience showed that emotion is not an output label but a construction that shapes perception, memory, and action; evolutionary game theory demonstrated that social behavior is governed by reciprocity and temporal discounting, not instantaneous utility; cybernetics formalized why a regulator must match the variety of what it controls. Each tradition contributed a piece. Nobody has assembled these threads for LLM-agents into a single, compact, testable operator. Section~\ref{sec:related} reviews each contribution in detail. Opening the black box matters beyond mechanistic completeness: (i) $\Gamma$ provides a finite, inspectable state vector, making each subsystem's contribution auditable rather than buried in prompt engineering; (ii) a controller tracking regulatory state creates the precondition for agents whose policy can be conditioned on their own arousal trajectory; (iii) explicit emotional and hormonal channels provide the computational substrate for empathy modeling --- recognizing a counterpart's affective state --- which is structurally distinct from fine-tuning on empathy datasets.
 
@@ -55,23 +56,31 @@ We propose the \textbf{Pro-Action operator} $\Gamma$ as a compact model of endog
 
 \section{Related work}\label{sec:related}
 
-\paragraph{LLM-agent orchestration.} Recent LLM-agent frameworks such as ReAct \citep{yao2023react}, LangGraph, and OpenClaw made language models operational by embedding them in action loops, tool graphs, and multi-agent workflows. This was a necessary engineering step: without explicit structure, an LLM has no durable procedure for acting in an environment. More recently, agent architectures have incorporated persistent memory streams, reflection, and simulated affective states to enrich the content of decisions \citep{park2023generative,kaiya2023lyfe,wang2023emotional,wang2023voyager}. The limitation common to both generations is that activation is usually externalized: the graph or supervisor decides when the model acts; the model supplies content for that externally selected moment. $\Gamma$ is complementary: those works provide richer \textit{content}; $\Gamma$ provides a principled internal account of \textit{timing}.
+\textbf{LLM-agent orchestration.} Recent LLM-agent frameworks such as ReAct \citep{yao2023react}, LangGraph, and OpenClaw made language models operational by embedding them in action loops, tool graphs, and multi-agent workflows. This was a necessary engineering step: without explicit structure, an LLM has no durable procedure for acting in an environment. More recently, agent architectures have incorporated persistent memory streams, reflection, and simulated affective states to enrich the content of decisions \citep{park2023generative,kaiya2023lyfe,wang2023emotional,wang2023voyager}. The limitation common to both generations is that activation is usually externalized: the graph or supervisor decides when the model acts; the model supplies content for that externally selected moment. $\Gamma$ is complementary: those works provide richer \textit{content}; $\Gamma$ provides a principled internal account of \textit{timing}.
 
-\paragraph{Internal regulation.} A different tradition begins from the opposite assumption: action should be driven by an internal regulatory state. Homeostatic RL makes internal deficit part of the reward \citep{keramati2014homeostatic}; active inference gives a broader variational formulation \citep{friston2017active,parr2022active}. These approaches are important --- they move regulation inside the agent --- but do not yield a compact operator with separately inspectable subsystem states. Once regulation is internalized, the next question is whether a single regulatory signal is sufficient. Stress physiology and allostasis suggest it is not: arousal, recovery, affect, and deliberation play distinct functional roles \citep{sterling1988allostasis,mcewen2007physiology,kirschbaum1993cortisol}. Interoceptive \citep{damasio1994descartes,craig2009you}, affect-regulation \citep{barrett2017how,ledoux2012rethinking}, and evolutionary game theory \citep{nowak2006evolutionary,henrich2005foundations} literatures together motivate attention, interoception, emotion, memory, cognition, and arousal-like dynamics as functional regulators.
+\textbf{Internal regulation.} A different tradition begins from the opposite assumption: action should be driven by an internal regulatory state. Homeostatic RL makes internal deficit part of the reward \citep{keramati2014homeostatic}; active inference gives a broader variational formulation \citep{friston2017active,parr2022active}. These approaches are important --- they move regulation inside the agent --- but do not yield a compact operator with separately inspectable subsystem states. Once regulation is internalized, the next question is whether a single regulatory signal is sufficient. Stress physiology and allostasis suggest it is not: arousal, recovery, affect, and deliberation play distinct functional roles \citep{sterling1988allostasis,kirschbaum1993cortisol,mcewen2007physiology}. Interoceptive \citep{damasio1994descartes,craig2009you}, affect-regulation \citep{ledoux2012rethinking,barrett2017how}, and evolutionary game theory \citep{henrich2005foundations,nowak2006evolutionary} literatures together motivate attention, interoception, emotion, memory, cognition, and arousal-like dynamics as functional regulators.
 
-\paragraph{Systems, cybernetics, and the gap.} If these variables are treated as separate regulators, the final problem is structural: how should they be composed? Ashby's law of requisite variety requires a regulator rich enough to match the environment \citep{ashby1956introduction}; Beer's Viable System Model adds recursive organization \citep{beer1972brain}; systemism frames the relevant object as composition rather than isolated component \citep{bunge2003emergence,romero2018scientific}. To our knowledge, the threads above --- exogenous orchestration, homeostatic internalization, affect regulation, and cybernetic composition --- have not been combined into a small, testable LLM-agent operator in which the six regulatory domains are explicit state variables with structured coupling. That is the gap $\Gamma$ is designed to occupy.
+\textbf{Systems, cybernetics, and the gap.} If these variables are treated as separate regulators, the final problem is structural: how should they be composed? Ashby's law of requisite variety requires a regulator rich enough to match the environment \citep{ashby1956introduction}; Beer's Viable System Model adds recursive organization \citep{beer1972brain}; systemism frames the relevant object as composition rather than isolated component \citep{bunge2003emergence,romero2018scientific}. To our knowledge, the threads above --- exogenous orchestration, homeostatic internalization, affect regulation, and cybernetic composition --- have not been combined into a small, testable LLM-agent operator in which the six regulatory domains are explicit state variables with structured coupling. That is the gap $\Gamma$ is designed to occupy.
 
 \section{The Pro-Action operator}
 
 \subsection{Kernel commitments (A1--A3)}
 
-Before defining $\Gamma$, we make explicit the modeling commitments that the operator assumes. A1--A3, introduced as the Axioms of Homeostatic Autonomy in a companion work currently under review, are not empirical results or theorems; they state, in this model, what counts as an autonomous, self-regulating agent and what makes an action regulatory rather than merely reactive. This is meant to avoid leaving the agent's ontology implicit in implementation choices. The axiom set was subjected to a formal coherence check using SMT-based tools (Z3) to verify that no pair of axioms is mutually contradictory under the intended semantics; all checks passed.
+Before defining $\Gamma$, we make explicit the modeling commitments that the operator assumes. A1--A3 are not empirical results or theorems; they state, in this model, what counts as an autonomous, self-regulating agent and what makes an action regulatory rather than merely reactive. This is meant to avoid leaving the agent's ontology implicit in implementation choices. The axiom set was subjected to a formal coherence check using SMT-based tools (Z3) to verify that no pair of axioms is mutually contradictory under the intended semantics; all checks passed.
 
-\textbf{A1 (Autonomy).} An agent is autonomous, in the relevant sense, when its policy depends on an internal state rather than only on external routing: $\pi_i = \pi_i(\delta_i(t))$ for some regulatory deficit $\delta_i$.
+\begin{assumption}[A1: Autonomy]
+An agent is autonomous when its policy depends on an internal state rather than only on external routing: $\pi_i = \pi_i(\delta_i(t))$ for some regulatory deficit $\delta_i$.
+\end{assumption}
 
-\textbf{A2 (Impulse).} The deficit creates activation pressure. A monotone drive $D(\delta_i)$ is mapped through a sigmoid, $p_i(t)=\sigma(D(\delta_i(t)))$, so regulatory imbalance changes the probability or pressure of acting. In IPD, an action is required each round, so this pressure is expressed as modulation of the required discrete choice rather than as the option to remain silent.
+\begin{assumption}[A2: Impulse]
+The deficit creates activation pressure. A monotone drive $D(\delta_i)$ is mapped through a sigmoid, $p_i(t)=\sigma(D(\delta_i(t)))$, so regulatory imbalance changes the probability or pressure of acting.
+\end{assumption}
 
-\textbf{A3 (Quality gate).} An action is adaptive insofar as it can satisfy the drive that produced it. Formally, a non-negative action-quality signal $g$ measures the effective reduction of the relevant deficit, with $\Delta\delta_i=-\alpha g$ and $\alpha>0$.
+In IPD, an action is required each round, so this pressure is expressed as modulation of the required discrete choice rather than as the option to remain silent.
+
+\begin{assumption}[A3: Quality gate]
+An action is adaptive insofar as it can satisfy the drive that produced it. Formally, a non-negative action-quality signal $g$ measures the effective reduction of the relevant deficit, with $\Delta\delta_i=-\alpha g$ and $\alpha>0$.
+\end{assumption}
 
 \subsection{The implemented operator}
 
@@ -81,7 +90,7 @@ In the benchmark, $\Gamma$ is instantiated as a delay-free linear coupled thermo
 \begin{equation}\label{eq:master}
 \resizebox{.92\columnwidth}{!}{$\boxed{\mathbf{x}_{t+1} = \mathbf{x}_t - \boldsymbol{\kappa} \odot (\mathbf{x}_t - \mathbf{x}^{*} + \boldsymbol{\delta}_{\text{pert}}(t)) + \boldsymbol{\lambda} - \boldsymbol{\alpha} \odot g_t + W\,\mathbf{x}_t}$}
 \end{equation}
-with $\odot$ elementwise, $\boldsymbol{\delta}_{\text{pert}}(10) = [0,0,0.5,0,0,0]^\top$ and zero otherwise, and $g_t \in [0,1]$ a normalized action-quality scalar computed from the opponent's last move. The perturbation is a transient load inside the deficit term, not an additive positive shock to the state variable. Values are clipped to $[0,1]$ after each update. The coupling is linear ($W \in \mathbb{R}^{6\times 6}$, sparse, hand-designed; exact values in Appendix~\ref{app:parameters}) with no activation nonlinearity.\footnote{$W$ was finalized in the initial commit (4aacfa7) before any benchmark results were observed; it was never modified post-hoc.} Biological terminology names the functional inspiration; no quantitative biological correspondence is claimed. The present empirical contribution tests structured linear coupling and prompt-mediated regulatory state injection, not implemented delay separation or fast/slow arbitration.
+with $\odot$ elementwise, $\boldsymbol{\delta}_{\text{pert}}(10) = [0,0,0.5,0,0,0]^\top$ and zero otherwise, and $g_t \in [0,1]$ a normalized action-quality scalar computed from the opponent's last move. The perturbation is a transient load inside the deficit term, not an additive positive shock to the state variable. Values are clipped to $[0,1]$ after each update. The coupling is linear ($W \in \mathbb{R}^{6\times 6}$, sparse, hand-designed; exact values and provenance in Appendix~\ref{app:parameters}) with no activation nonlinearity. Biological terminology names the functional inspiration; no quantitative biological correspondence is claimed. The present empirical contribution tests structured linear coupling and prompt-mediated regulatory state injection, not implemented delay separation or fast/slow arbitration.
 
 The controller projects its state into two scalar signals injected into the LLM's prompt (Section~\ref{sec:prompt-protocol}):
 \begin{equation}\label{eq:projection}
@@ -91,13 +100,13 @@ where $\sigma$ is the logistic sigmoid. $p_C \in [0,1]$ is the controller's reco
 
 \subsection{Reductions to simpler models}
 
-\textbf{Reduction to Driveplexity.} Driveplexity (companion work, currently under review) is a single-drive homeostatic activation model in which each LLM-agent maintains a scalar epistemic deficit $\delta_i$ that decays at a fixed rate and is reduced by the quality of each action executed. $\Gamma$ subsumes it: when $\mathbf{x} \to x_5 \equiv \delta_i$, $\boldsymbol{\kappa}=\mathbf{0}$, $\boldsymbol{\lambda} \to \lambda$, $\boldsymbol{\alpha} \to \alpha$, and $W=\mathbf{0}$, Equation~\eqref{eq:master} reduces to $\delta_{t+1} = \delta_t + \lambda - \alpha \cdot g_t$, which is exactly A1--A3.
+\textbf{Reduction to single-drive homeostatic activation.} A simpler homeostatic activation model can be obtained by retaining only one scalar deficit $\delta_i$ that drifts upward at a fixed rate and is reduced by the quality of each action executed. $\Gamma$ subsumes this case: when $\mathbf{x} \to x_5 \equiv \delta_i$, $\boldsymbol{\kappa}=\mathbf{0}$, $\boldsymbol{\lambda} \to \lambda$, $\boldsymbol{\alpha} \to \alpha$, and $W=\mathbf{0}$, Equation~\eqref{eq:master} reduces to $\delta_{t+1} = \delta_t + \lambda - \alpha \cdot g_t$, which is exactly A1--A3.
 
-\textbf{Reduction to homeostatic RL.} When $\boldsymbol{\kappa}=\mathbf{0}$ and $W=\mathbf{0}$, $\Gamma$ becomes a reactive drive-based policy consistent with the simplified form of Keramati--Gutkin (2014).
+\textbf{Reduction to homeostatic RL.} When $\boldsymbol{\kappa}=\mathbf{0}$ and $W=\mathbf{0}$, $\Gamma$ becomes a reactive drive-based policy consistent with the simplified form of homeostatic reinforcement learning \citep{keramati2014homeostatic}.
 
 The six-subsystem partition is motivated by regulatory functions that the relevant literatures distinguish independently. The present benchmark tests one hand-designed six-dimensional instantiation; it does not prove that no five-dimensional or differently tuned alternative could reproduce the same behavior.
 
-\subsection{Experimental design}
+\section{Experimental design}
 
 We test $\Gamma$ within the Iterated Prisoner's Dilemma (IPD). The reason for this choice is that IPD has extensive empirical evidence of human behavior in repeated social interaction \citep{axelrod1984evolution,nowak2006evolutionary,porcelli2017stress}, providing a non-trivial setting for evaluating whether an agent differentiates its behavior across opponent types. The benchmark uses Axelrod payoffs $CC=(3,3)$, $CD=(0,5)$, $DC=(5,0)$, and $DD=(1,1)$, 10\% symmetric action noise, and 50 rounds, with a forced deficit perturbation at round 10 to keep the internal-state trajectory non-stationary. The four opponent policies are Tit-for-Tat (TFT; cooperates initially, then copies the agent's previous revealed action), Generous Tit-for-Tat (GTFT; copies cooperation, but forgives defection with probability 0.3), Grim trigger (cooperates until the agent defects once, then defects thereafter), and Random (cooperates with probability 0.5 each round).
 
@@ -117,11 +126,11 @@ The main reported comparisons are Full-$\Gamma$, ReAct, HRRL, and Drive-only.
 
 The controller modulates the LLM through a frozen, version-controlled prompt template. We call this interface \textit{Regulatory State Verbalized Interoception} (RSVI): each round, the six thermostat values $\mathbf{x}_t$ and the aggregated proposal $p_C, h_{\mathrm{SAM}}$ are inserted with semantic anchors pairing each value with its set-point and a qualitative low/high interpretation (e.g., \texttt{hormonal = 0.58 (set-point 0.30; low = calm, high = elevated arousal)}). RSVI is not an action rule such as ``if stressed, defect.'' It verbalizes internal regulatory information as context for the LLM's policy execution; the controller modulates rather than mandates. Because the completed benchmark does not include a matched prompt-label ablation, lexical priming remains an open alternative explanation.
 
-\section{Computational verification}
+\subsection{Computational verification}
 
 Before empirical evaluation, we subjected Equation~\eqref{eq:master} and its reference implementation to computational sanity checks using symbolic algebra (SymPy), SMT-based counterexample search (Z3), arbitrary-precision arithmetic (mpmath), and numerical dynamical tests (NumPy). These checks deliberately isolate the controller equation from RSVI and from the LLM prompt: before asking whether verbalized regulatory state changes LLM behavior, we first test whether the underlying dynamics are internally consistent and non-trivial on their own.
 
-\textbf{Smoke-test results (all pass):} (1) Set-point convergence: $\|\mathbf{x}_t - \mathbf{x}^{*}\| < 0.15$ after 10 rounds. (2) Perturbation response remains bounded under the implemented update. (3) 20 iterations without divergence. (4) Driveplexity is an invariant subspace of $\Gamma$ ($\delta = -0.0513$).
+\textbf{Smoke-test results (all pass):} (1) Set-point convergence: $\|\mathbf{x}_t - \mathbf{x}^{*}\| < 0.15$ after 10 rounds. (2) Perturbation response remains bounded under the implemented update. (3) 20 iterations without divergence. (4) The single-drive reduction is an invariant subspace of $\Gamma$ ($\delta = -0.0513$).
 
 These LLM-free results verify the \textit{internal consistency} of the controller dynamics, not RSVI, biological fidelity, or behavioral performance.
 
@@ -131,20 +140,20 @@ The first empirical question is whether Full-$\Gamma$ collapses to a trivial pol
 
 Each \emph{cell} denotes one experimental unit (\mbox{$\Gamma$-condition} $\times$ provider $\times$ opponent $\times$ seed) run for 50 IPD rounds. The main benchmark is fully covered: all 920 cells completed with balanced opponent coverage. LLM conditions reach 120 cells each; numerical reductions reach 40.
 
-\begin{table}[t]
-\caption{Main 920-cell benchmark. LLM conditions $n=120$; numerical reductions (HRRL, Drive-only) $n=40$. Means with 95\% bootstrap CIs (10k resamples). Range is computed per provider/seed block as max$-$min cooperation across the four opponents, then averaged.}
+\begin{table}[!h]
+\caption{Main 920-cell benchmark. Means with 95\% bootstrap CIs; full summary in Table~\ref{tab:snapshot-full}.}
 \label{tab:snapshot}
 \centering
 \small
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-Condition & Coop & Coop (Grim) & Range & Switches \\
+Condition & Coop & Coop (Grim) & Range \\
 \midrule
-Full-$\Gamma$ & $0.720$ [.690,.749] & $0.495$ [.452,.539] & $0.386$ [.343,.424] & $16.0$ [15.0,17.0] \\
-ReAct & $0.842$ [.833,.851] & $0.825$ [.809,.841] & $0.103$ [.087,.119] & $12.8$ [12.0,13.6] \\
-HRRL & $0.706$ [.680,.729] & $0.616$ [.568,.662] & $0.162$ [.102,.228] & $17.8$ [16.7,18.9] \\
-Drive-only & $0.458$ [.405,.514] & $0.736$ [.708,.766] & $0.434$ [.388,.486] & $21.2$ [19.9,22.5] \\
+Full-$\Gamma$ & $0.720$ [.690,.749] & $0.495$ [.452,.539] & $0.386$ [.343,.424] \\
+ReAct & $0.842$ [.833,.851] & $0.825$ [.809,.841] & $0.103$ [.087,.119] \\
+HRRL & $0.706$ [.680,.729] & $0.616$ [.568,.662] & $0.162$ [.102,.228] \\
+Drive-only & $0.458$ [.405,.514] & $0.736$ [.708,.766] & $0.434$ [.388,.486] \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -169,9 +178,9 @@ This also clarifies the ceiling of the orchestration paradigm. External graphs a
 
 The remaining limitations are consequently precise. The completed benchmark does not establish that six subsystems are minimal, that the chosen $W$ is unique, or that semantic labels play no role in the prompt. A direct dimensionality test would require an LLM-backed scalar-regulatory baseline matched to Full-$\Gamma$ on provider, seed, opponent, and prompt budget. Payoff improvement is not claimed because per-interaction payoff traces were not retained; without those traces, we can describe opponent-differentiated cooperation but cannot determine whether that differentiation improved cumulative utility. Several planned ablations also remain outside the reported benchmark. Scrambled-label prompts were intended to separate numerical regulatory state from lexical anchoring, and matched scalar-regulatory prompts were intended to test whether the effect requires the six-dimensional state rather than a simpler homeostatic signal; parsing failures and incomplete usable runs prevented these controls from being included as evidence. The same constraint applies to timescales and delays. A richer version of the research program aims to implement distinct regulatory timescales, delayed recovery, and fast/slow arbitration, but the present paper deliberately tests the narrower feasibility question: whether a delay-free coupled regulatory state can be computed, verbalized, and coupled to LLM policy execution in a controlled benchmark. Finally, the present IPD setting should not be treated as a human-comparison study. Relating $\Gamma$ to human regulatory behavior would require longer interactions, comparable perturbation protocols, and behavioral or physiological measures that are genuinely analogous to the controller traces. These are follow-up experiments rather than claims supported by the current benchmark.
 
-\paragraph{What $\Gamma$ is and is not.} $\Gamma$ models \emph{regulatory autonomy}: the agent's policy depends on its internal state, which sustains essential variables within viable ranges under perturbation. This is distinct from \emph{proactivity} --- one possible expression of regulation, not its definition. The current agent landscape often conflates autonomy with proactivity; $\Gamma$ suggests a different axis: whether activation timing is governed by an inspectable internal process.
+\textbf{What $\Gamma$ is and is not.} $\Gamma$ models \emph{regulatory autonomy}: the agent's policy depends on its internal state, which sustains essential variables within viable ranges under perturbation. This is distinct from \emph{proactivity} --- one possible expression of regulation, not its definition. The current agent landscape often conflates autonomy with proactivity; $\Gamma$ suggests a different axis: whether activation timing is governed by an inspectable internal process.
 
-\paragraph{Reproducibility.} Code, data, and prompts: \url{https://anonymous.4open.science/r/proaction_operator-85D2/}
+\textbf{Reproducibility.} Code, data, and prompts: \url{https://anonymous.4open.science/r/proaction_operator-85D2/}
 
 \section{Conclusion}
 
@@ -179,9 +188,9 @@ The value of $\Gamma$ lies less in claiming a final architecture than in making 
 
 \section*{Impact Statement}
 
-This paper proposes a self-regulation model for LLM agents. The primary intended impact is scientific: making agent activation auditable and inspectable through explicit thermostat traces. A self-regulation substrate carries dual-use implications. On the positive side, interpretable regulatory state enables auditing of agent behavior and provides a computational substrate for empathy modeling with potential applications in mental health and tutoring. On the risk side, regulatory-state awareness could enable modeling a counterpart's arousal and deliberative load, which may facilitate context-sensitive persuasion. Mitigation: $\Gamma$'s state is monitorable; deployment should be paired with interpretability audits on thermostat traces.
+This paper proposes a self-regulation model for LLM agents. The primary intended impact is scientific: making agent activation auditable and inspectable through explicit thermostat traces, rather than treating action timing as an opaque consequence of prompting or external orchestration. Such regulatory substrates may support a broader research direction in which advances in agent reliability do not depend only on larger parametric models or centralized compute, but also on formal, low-dimensional, inspectable control structures that can be studied in smaller laboratories and diverse regional research traditions. Potential benefits include improved debugging of autonomous behavior, clearer accountability for when an agent escalates or defers, and computational substrates for empathy modeling in domains such as tutoring and mental health. The same mechanisms are dual-use: regulatory-state awareness could be used to infer or exploit a counterpart's arousal, uncertainty, or deliberative load, enabling more context-sensitive persuasion or manipulation. Deployment should therefore pair regulatory agents with trace audits, user-facing transparency about what internal state is being used, and domain-specific limits on persuasive or high-stakes interventions.
 
-\bibliographystyle{icml2026}
+\bibliographystyle{icml2025}
 \bibliography{referencias}
 
 \newpage
@@ -195,15 +204,14 @@ This paper proposes a self-regulation model for LLM agents. The primary intended
 \renewcommand{\thetable}{\thesection.\arabic{table}}
 \renewcommand{\theequation}{\thesection.\arabic{equation}}
 \onecolumn
-\section{Parameter table and simulation trace}\label{app:parameters}
+\section{Parameter tables and simulation trace}\label{app:parameters}
 
-\begin{table}[t]
-\caption{Frozen parameter provenance for the IPD instantiation. Index mapping follows the executed prompt: 0=Attention, 1=Perception, 2=Hormonal/arousal, 3=Emotional valence, 4=Neuropsychological readiness, 5=Cognitive deliberation.}
+\begin{table}[!h]
+\caption{Frozen parameter provenance for the IPD instantiation.}
 \label{tab:params}
 \centering
-\footnotesize
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lll}
+\small
+\begin{tabular}{p{0.16\textwidth}p{0.28\textwidth}p{0.46\textwidth}}
 \toprule
 Parameter & Value & Provenance \\
 \midrule
@@ -211,10 +219,27 @@ $\boldsymbol{\lambda}$ & $[.08,.07,.10,.08,.06,.10]$ & smoke-test calibration \\
 $\boldsymbol{\alpha}$ & $[.20,.15,.25,.20,.10,.15]$ & smoke-test calibration \\
 $\boldsymbol{\kappa}$ & $[.10,.10,.15,.12,.08,.10]$ & smoke-test calibration \\
 $\mathbf{x}^{*}$ & $[.3,.2,.3,.1,.2,.4]$ & principled prior / stable interior set-point \\
-$W$ & see Eq.~\eqref{eq:w-matrix} & functional constraint and wiring provenance \\
+$W$ & see Eq.~\eqref{eq:w-matrix} & fixed before benchmark evaluation \\
 Rounds & 50 & comparability requirement for final cells \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
+\end{table}
+
+\begin{table}[!h]
+\caption{Full benchmark summary including action switches. Means use 95\% bootstrap CIs.}
+\label{tab:snapshot-full}
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Condition & Coop & Coop (Grim) & Range & Switches \\
+\midrule
+Full-$\Gamma$ & $0.720$ [.690,.749] & $0.495$ [.452,.539] & $0.386$ [.343,.424] & $16.0$ [15.0,17.0] \\
+ReAct & $0.842$ [.833,.851] & $0.825$ [.809,.841] & $0.103$ [.087,.119] & $12.8$ [12.0,13.6] \\
+HRRL & $0.706$ [.680,.729] & $0.616$ [.568,.662] & $0.162$ [.102,.228] & $17.8$ [16.7,18.9] \\
+Drive-only & $0.458$ [.405,.514] & $0.736$ [.708,.766] & $0.434$ [.388,.486] & $21.2$ [19.9,22.5] \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \begin{equation}\label{eq:w-matrix}
