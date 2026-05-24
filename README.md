@@ -1,7 +1,5 @@
 ﻿# The Pro-Action Operator Γ — ICML 2026 Latinx in AI Workshop Supplementary Material
 
-![Pro-Action operator animation](assets/proaction_operator_demo.gif)
-
 This repository contains the anonymous supplementary material for:
 
 **The Pro-Action Operator: The Feasibility of a Bio-Inspired Regulatory Harness for LLM Agents**
