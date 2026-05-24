@@ -65,8 +65,7 @@ ecuacion_proaccion/
 │   └── status/benchmark.json    # Benchmark status metadata
 │
 ├── results/
-│   ├── results.csv              # Cell-level benchmark results
-│   └── hypotheses.json          # Hypothesis-test summary used for paper claims
+│   └── results.csv              # Cell-level benchmark results
 │
 └── figures/
     └── fig1_thermostats.png     # Appendix simulation trace used in the paper
