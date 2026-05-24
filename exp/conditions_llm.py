@@ -56,6 +56,30 @@ CONDITIONS: dict[str, dict[str, Any]] = {
         "needs_llm": True,
         "gamma_params": None,  # No Gamma
     },
+    "Scrambled-Gamma": {
+        "description": "Full-Γ with scrambled semantic labels (priming control)",
+        "ablation": None,
+        "needs_llm": True,
+        "gamma_params": "default",
+    },
+    "pC-only": {
+        "description": "Full-Γ controller, prompt stripped to p(C) + h_SAM only",
+        "ablation": None,
+        "needs_llm": True,
+        "gamma_params": "default",
+    },
+    "Random-Gamma": {
+        "description": "W entries permuted; same τ_k, κ, λ, α (coupling-structure ablation)",
+        "ablation": "random_W",
+        "needs_llm": True,
+        "gamma_params": "random_W",
+    },
+    "Collapse-NC": {
+        "description": "N and C merged into one regulator (5-vs-6 subsystem test)",
+        "ablation": "collapse_NC",
+        "needs_llm": True,
+        "gamma_params": "collapse_NC",
+    },
 }
 
 
@@ -104,6 +128,24 @@ def apply_ablation(params: dict, ablation_type: str) -> dict:
         p["W"] = np.zeros((6, 6))
         p["kappas"] = np.zeros(6)
         p["kappas"][5] = 0.10  # only cognitive has weak return
+    elif ablation_type == "random_W":
+        # Random-Γ: permute W entries, keep diagonal zero
+        import numpy as np
+        rng = np.random.default_rng(42)
+        W_flat = p["W"].copy()
+        mask = ~np.eye(6, dtype=bool)
+        vals = W_flat[mask].copy()
+        rng.shuffle(vals)
+        W_flat[mask] = vals
+        p["W"] = W_flat
+    elif ablation_type == "collapse_NC":
+        # Collapse-NC: average N (idx 4) and C (idx 5) rows/cols
+        p["W"][4, :] = (p["W"][4, :] + p["W"][5, :]) / 2
+        p["W"][5, :] = p["W"][4, :]
+        p["W"][:, 4] = (p["W"][:, 4] + p["W"][:, 5]) / 2
+        p["W"][:, 5] = p["W"][:, 4]
+        p["kappas"][4] = (p["kappas"][4] + p["kappas"][5]) / 2
+        p["kappas"][5] = p["kappas"][4]
     
     return p
 
@@ -148,8 +190,14 @@ def get_llm_prompt_renderer(condition: str) -> Callable | None:
     if condition == "ReAct":
         from exp.prompts import render_react
         return render_react
+    elif condition == "Scrambled-Gamma":
+        from exp.prompts import get_scrambled_prompt
+        return get_scrambled_prompt
+    elif condition == "pC-only":
+        from exp.prompts import render_pc_only
+        return render_pc_only
     else:
-        # Full-Gamma, No-H, No-E, No-N use Full-Gamma prompt
+        # Full-Gamma, No-H, No-E, No-N, Random-Gamma, Collapse-NC use Full-Gamma prompt
         from exp.prompts import render_full_gamma
         return render_full_gamma
 

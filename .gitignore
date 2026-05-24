@@ -1,4 +1,17 @@
-# Python
+# ---------------------------------------------------------------------------
+# Reviewer-facing repository policy
+# ---------------------------------------------------------------------------
+# Keep the public/reviewer repository limited to artifacts needed to reproduce
+# and inspect the ICML Pro-Action paper:
+# - paper source/PDF, ICML style files, bibliography
+# - calibration, smoke tests, axiom/math checks
+# - benchmark code, prompts, checkpoints, cited results
+# - generated figure(s) actually used in the submitted paper
+#
+# Internal notes, old venue formats, drafts, reviews, exploratory analyses, and
+# unused figures are ignored.
+
+# Python / environments / caches
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,66 +32,81 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
-# Virtual environments
 venv/
 ENV/
 env/
-.venv
+.venv/
 
-# IDE
+# IDE / OS / local agent state
 .vscode/
 .idea/
 .windsurf/
+.claude/
 *.swp
 *.swo
 *~
-
-# Claude plans
-.claude/
-
-# Build artifacts
-*.aux
-*.bbl
-*.blg
-*.out
-
-# Secrets
-.env
-*.key
-
-# OS
 .DS_Store
 Thumbs.db
+.cascadeignore
 
-# Temp files
+# Secrets, runtime state, build outputs
+.env
+*.key
 *.tmp
 *.bak
 *.log
 runner_output.log
-
-# Runtime state
+build.log
 budget_state.json
 prompts_cache/
+logs/
+reports/
+*.aux
+*.bbl
+*.blg
+*.out
+proaction_paper_preprint.*
 
-# Internal notes & drafts (not for reviewers)
-notas.md
-conceptual.md
-ecuacion.md
-explicacion_ecuacion.md
-diagrama.md
-abstract_neurips.md
-micro_benchmark.md
-submission_context.md
-paper_reviews_todo.md
-proaction_paper_prev.tex
+# Old venue formats, templates, and previous paper versions
+Formatting_Instructions_For_NeurIPS_2026*/
+NeurIPS_2022/
+neurips_2026.sty
+neurips_2026.tex
 neurips_checklist.md
 neurips_guidelines_complete.md
 neurips_submission.tex
+abstract_neurips.md
+checklist.tex
+icml_guide/
+proaction_paper.tex
+proaction_paper.pdf
+proaction_paper_prev.tex
+proaction_paper_icml_prev.tex
 
-# Internal scripts (not needed for reproducibility)
+# Internal notes, planning docs, reviews, and research material
+notas.md
+notes.md
+notes_2.md
+conceptual.md
+ecuacion.md
+ecuacion_v2.md
+explicacion_ecuacion.md
+diagrama.md
+diseño_experimento.md
+micro_benchmark.md
+submission_context.md
+paper_reviews_todo.md
+preguntas_experimento.md
+research/
+reviews/
+ddl/
+data/
+pr
+progress.txt
+eda_output.txt
+
+# Internal/debug/exploratory scripts not needed for paper reproduction
 _inspect.py
-opp_breakdown.py
 audit_incomplete.py
 audit_meta.py
 audit_results.py
@@ -87,31 +115,74 @@ cleanup_incomplete.py
 debug_episode.py
 debug_full_cell.py
 debug_llm.py
+eda_claims.py
+eda_deep.py
 hc.py
 hc2.py
+hypothesis_check.py
 llm_healthcheck.py
 mini_benchmark.py
 monitor.py
-hypothesis_check.py
+opp_breakdown.py
+sweep_random_gamma.py
 
-# NOTE: verify_*.py are NOT ignored — they are the math validation suite
-# referenced in the paper (SymPy, Z3, mpmath). Reviewers can run them.
-
-# Internal data/results (not for reviewers)
+# Internal/unused result artifacts
 hypothesis_results.txt
+hypothesis_tests.json
+recovery_tests.json
 simulation.json
+results/random_gamma_sweep.json
+checkpoints/cells_bck.json
+checkpoints/run_*/
 
-# Internal directories
-logs/
-reports/
-reviews/
-research/
-Formatting_Instructions_For_NeurIPS_2026 (1)/
-NeurIPS_2022/
-
-# Old figures (replaced by figures/ dir)
+# Unused figures / image drafts
+fig_op.png
 figure.png
 figure_2.png
+figure_2b.png
 figure_alt.png
 figure_fixed.png
 figure_fixed_4k.png
+figures/fig2_payoffs.png
+figures/fig3_elastic_return.png
+figures/fig4_recovery_analysis.png
+figures/fig5_sensitivity.png
+figures/fig_arch.png
+
+# Reviewer-facing files intentionally NOT ignored
+!README.md
+!LICENSE
+!Makefile
+!Dockerfile
+!requirements.txt
+!reproducibility.md
+!proaction_paper_icml.tex
+!proaction_paper_icml.pdf
+!referencias.bib
+!icml2026.sty
+!icml2026.bst
+!exp/
+!exp/*.py
+!tests/
+!tests/*.py
+!simulator.py
+!smoke_test.py
+!verify_symbolic.py
+!verify_mpmath.py
+!verify_z3.py
+!verify_axioms_z3.py
+!axiom_soundness_report.md
+!soundness_report.md
+!analyze_bootstrap.py
+!analyze_hypothesis_tests.py
+!bootstrap_results.json
+!checkpoints/
+!checkpoints/cells.json
+!checkpoints/status/
+!checkpoints/status/benchmark.json
+!results/
+!results/results.csv
+!results/bfi.json
+!results/hypotheses.json
+!figures/
+!figures/fig1_thermostats.png

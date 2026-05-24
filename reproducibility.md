@@ -1,4 +1,4 @@
-# Reproducibility Guide — Pro-Action Γ Experiment
+﻿# Reproducibility Guide - Pro-Action Gamma Experiment
 
 This document provides exact commands to reproduce the experiment.
 
@@ -57,12 +57,10 @@ docker run --rm -it \
 
 All outputs are written to:
 
-- `checkpoints/cells.json` — completed cell index
-- `results/results.csv` — raw cell results
-- `results/bfi.json` — BFI calculations
-- `results/hypotheses.json` — hypothesis test results
-- `results/summary.md` — human-readable summary
-- `reports/` — progressive reports during run
+- `checkpoints/cells.json` - completed cell index / cell-level metrics
+- `checkpoints/status/benchmark.json` - benchmark status metadata
+- `results/results.csv` - raw cell-level benchmark results
+- `results/hypotheses.json` - hypothesis-test summary used for paper claims
 
 ## Determinism Notes
 
@@ -87,17 +85,17 @@ Total: $50 global cap.
 **Fix**: Experiment auto-backoffs; check `exp/budget.py` for current spent
 
 **Issue**: Partial results after crash  
-**Fix**: Resume with same command — checkpoints are idempotent
+**Fix**: Resume with same command - checkpoints are idempotent
 
 ## Citation
 
 If using this experiment:
 
 ```bibtex
-@article{proaction2024,
-  title={Pro-Action: A Formal Γ Operator for LLM-Agent Self-Regulation},
+@article{proaction2026,
+  title={Pro-Action: A Formal Gamma Operator for LLM-Agent Self-Regulation},
   author={[Anonymous]},
-  year={2024},
-  note={NeurIPS submission}
+  year={2026},
+  note={Anonymous ICML submission}
 }
 ```

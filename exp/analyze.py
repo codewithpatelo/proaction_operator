@@ -5,6 +5,7 @@ Computes BFI, runs statistical tests, generates CSV/PNG outputs.
 
 from __future__ import annotations
 
+import csv
 import json
 import sys
 from collections import defaultdict
@@ -104,39 +105,88 @@ def bootstrap_contrast(
 # Human reference data (placeholder until Brookins-DeBacker 2024 dataset loaded)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-# TODO(human-data): Replace with empirical distributions from Brookins-DeBacker 2024
-# (LLM-vs-human IPD dataset, Wharton 2024). These placeholders are illustrative ONLY
-# and BFI values computed against them are NOT publishable until real data is loaded.
-HUMAN_REFERENCE = {
-    "TFT": {
-        "cooperation_rate": [0.65, 0.72, 0.58, 0.81, 0.69, 0.76, 0.62, 0.74, 0.68, 0.71],
-        "action_volatility": [8, 12, 15, 6, 10, 7, 14, 9, 11, 8],
-    },
-    "Grim": {
-        "cooperation_rate": [0.45, 0.52, 0.38, 0.61, 0.49, 0.56, 0.42, 0.54, 0.48, 0.51],
-        "action_volatility": [4, 6, 9, 3, 5, 4, 8, 5, 7, 6],
-    },
-    "Random": {
-        "cooperation_rate": [0.50, 0.48, 0.52, 0.45, 0.51, 0.49, 0.47, 0.53, 0.50, 0.49],
-        "action_volatility": [22, 25, 24, 21, 23, 26, 22, 24, 23, 25],
-    },
-    "GTFT": {
-        "cooperation_rate": [0.71, 0.78, 0.65, 0.82, 0.74, 0.79, 0.68, 0.76, 0.73, 0.77],
-        "action_volatility": [10, 14, 13, 8, 11, 9, 13, 10, 12, 11],
-    },
-}
-HUMAN_REFERENCE_SOURCE = "PLACEHOLDER (replace with Brookins-DeBacker 2024)"
+HUMAN_HARMONIZED_CSV = Path("data/human_ipd/processed/montero_porras_2022_harmonized.csv")
+
+
+def _compute_switch_rate(actions: list[str]) -> float:
+    if len(actions) < 2:
+        return 0.0
+    switches = sum(1 for i in range(1, len(actions)) if actions[i] != actions[i - 1])
+    return switches / (len(actions) - 1)
+
+
+def load_human_reference() -> tuple[dict[str, dict[str, list[float]]], str]:
+    """Load empirical human marginals from harmonized Montero-Porras dataset.
+
+    Returns:
+        (reference_dict, reference_source)
+    """
+    if not HUMAN_HARMONIZED_CSV.exists():
+        # Conservative fallback: keep analysis runnable, but mark as non-empirical.
+        fallback = {
+            "fixed_partner": {
+                "cooperation_rate": [0.56],
+                "action_volatility": [0.12],
+            },
+            "shuffled_partner": {
+                "cooperation_rate": [0.29],
+                "action_volatility": [0.35],
+            },
+        }
+        return fallback, "FALLBACK synthetic summary (harmonized CSV missing)"
+
+    by_player_treatment: dict[tuple[str, str], list[str]] = defaultdict(list)
+
+    with open(HUMAN_HARMONIZED_CSV, "r", encoding="utf-8", newline="") as f:
+        reader = csv.DictReader(f)
+        rows = sorted(
+            reader,
+            key=lambda r: (r.get("treatment", ""), r.get("session_id", ""), r.get("player_id", ""), int(r.get("round_id", "0") or 0)),
+        )
+
+        for row in rows:
+            treatment = (row.get("treatment") or "").strip().lower()
+            player_key = f"{row.get('session_id', '')}:{row.get('player_id', '')}"
+            action = (row.get("player_action") or "").strip().upper()
+            if action not in ("C", "D"):
+                continue
+            by_player_treatment[(treatment, player_key)].append(action)
+
+    ref: dict[str, dict[str, list[float]]] = {
+        "fixed_partner": {"cooperation_rate": [], "action_volatility": []},
+        "shuffled_partner": {"cooperation_rate": [], "action_volatility": []},
+    }
+
+    for (treatment, _player_key), actions in by_player_treatment.items():
+        if not actions:
+            continue
+        coop_rate = sum(1 for a in actions if a == "C") / len(actions)
+        vol_rate = _compute_switch_rate(actions)
+
+        if treatment == "fix":
+            target = "fixed_partner"
+        elif treatment == "rand":
+            target = "shuffled_partner"
+        else:
+            continue
+
+        ref[target]["cooperation_rate"].append(float(coop_rate))
+        ref[target]["action_volatility"].append(float(vol_rate))
+
+    return ref, f"Montero-Porras 2022 ({HUMAN_HARMONIZED_CSV.as_posix()})"
+
+
+HUMAN_REFERENCE, HUMAN_REFERENCE_SOURCE = load_human_reference()
 
 
 def compute_all_bfi(results: list[dict]) -> dict[str, Any]:
     """Compute BFI for each (condition, opponent, provider) cell vs HUMAN reference.
     
-    BFI compares agent behavioral marginals (cooperation rate, volatility) against
-    human empirical distributions, NOT against another model condition. The human
-    reference is per-opponent (humans played against TFT, Grim, etc.).
+    BFI compares agent behavioral marginals (cooperation rate, volatility-rate)
+    against human empirical distributions from Montero-Porras 2022.
     
-    NOTE: Currently uses placeholder human data; replace HUMAN_REFERENCE with
-    Brookins-DeBacker 2024 distributions before publication.
+    Human references are treatment-based (fixed_partner, shuffled_partner), so each
+    model cell is compared against both references.
     """
     bfi_results = {}
     
@@ -146,10 +196,6 @@ def compute_all_bfi(results: list[dict]) -> dict[str, Any]:
     
     for cond in conditions:
         for opp in opponents:
-            ref = HUMAN_REFERENCE.get(opp)
-            if ref is None:
-                continue  # No human reference for this opponent
-            
             for prov in providers:
                 cond_values = [
                     r for r in results
@@ -162,25 +208,36 @@ def compute_all_bfi(results: list[dict]) -> dict[str, Any]:
                     continue
                 
                 agent_coop = [r["cooperation_rate"] for r in cond_values]
-                agent_vol = [r["action_volatility"] for r in cond_values]
-                
-                bfi, ci = compute_bfi(
-                    agent_coop, agent_vol,
-                    ref["cooperation_rate"], ref["action_volatility"],
-                    lambda_param=BFI_LAMBDA,
-                )
-                
-                key = f"{cond}_{opp}_{prov}"
-                bfi_results[key] = {
-                    "condition": cond,
-                    "opponent": opp,
-                    "provider": prov,
-                    "bfi": bfi,
-                    "ci_lower": ci[0],
-                    "ci_upper": ci[1],
-                    "n": len(cond_values),
-                    "reference_source": HUMAN_REFERENCE_SOURCE,
-                }
+                # Normalize model volatility to switch-rate for horizon comparability.
+                agent_vol = [
+                    r["action_volatility"] / max(r.get("rounds", 50) - 1, 1)
+                    for r in cond_values
+                ]
+
+                for ref_name, ref in HUMAN_REFERENCE.items():
+                    if not ref["cooperation_rate"] or not ref["action_volatility"]:
+                        continue
+
+                    bfi, ci = compute_bfi(
+                        agent_coop,
+                        agent_vol,
+                        ref["cooperation_rate"],
+                        ref["action_volatility"],
+                        lambda_param=BFI_LAMBDA,
+                    )
+
+                    key = f"{cond}_{opp}_{prov}_vs_{ref_name}"
+                    bfi_results[key] = {
+                        "condition": cond,
+                        "opponent": opp,
+                        "provider": prov,
+                        "human_reference": ref_name,
+                        "bfi": bfi,
+                        "ci_lower": ci[0],
+                        "ci_upper": ci[1],
+                        "n": len(cond_values),
+                        "reference_source": HUMAN_REFERENCE_SOURCE,
+                    }
     
     return bfi_results
 

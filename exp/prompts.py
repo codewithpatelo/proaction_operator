@@ -136,3 +136,40 @@ def render_react(
     history_str = " | ".join(f"A:{a},O:{o}" for a, o in history[-5:]) if history else "(none)"
     user = REACT_USER_TEMPLATE.format(t=t, history=history_str)
     return REACT_SYSTEM, user
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# p(C)-only prompt: strips thermostat values, keeps only aggregated signals
+# ═══════════════════════════════════════════════════════════════════════════════
+
+PC_ONLY_USER_TEMPLATE = """Round {t} of 50.
+Last 5 rounds (most recent last): {history}
+
+Aggregated regulatory signals:
+  recommended cooperation pressure p(C) = {p_C:.2f}  (range [0,1]; 0.5 = ambiguous, >0.7 = strong push to C, <0.3 = strong push to D)
+  recent acute stress (h_SAM)            = {h_sam:.2f}  (aggregate of hormonal minus emotional, range ≈ [-1, 1]; 0 = baseline, positive = stress spike, negative = below baseline / recovered)
+
+Decide your next action. You may follow or override p(C) based on context.
+Respond with exactly one JSON object:
+{{"action": "C" or "D", "reason": "<one short sentence>"}}"""
+
+
+def render_pc_only(
+    p_C: float,
+    h_sam: float,
+    t: int,
+    history: list[tuple[str, str]],
+) -> tuple[str, str]:
+    """Return (system_prompt, user_prompt) for p(C)-only ablation.
+    
+    Same system prompt as Full-Γ (LLM knows it has internal state),
+    but the per-round prompt omits the six thermostat values.
+    """
+    history_str = " | ".join(f"A:{a},O:{o}" for a, o in history[-5:]) if history else "(none)"
+    user = PC_ONLY_USER_TEMPLATE.format(
+        p_C=p_C,
+        h_sam=h_sam,
+        t=t,
+        history=history_str,
+    )
+    return FULL_GAMMA_SYSTEM, user

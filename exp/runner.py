@@ -30,7 +30,7 @@ except ImportError:
     pass  # dotenv optional; relies on OS env vars
 
 # Local imports
-from exp.prompts import render_full_gamma, render_react, PROMPT_VERSION
+from exp.prompts import render_full_gamma, render_react, render_pc_only, get_scrambled_prompt, PROMPT_VERSION
 from exp.checkpoint import (
     CellKey, CellResult, load_cells, save_cell, is_cell_complete,
     save_episode_state, load_episode_resume, clear_episode,
@@ -69,11 +69,14 @@ CONDITIONS = [
     "No-E", 
     "No-N",
     "Random-Gamma",   # E2: parameter-count control (REV 5 #3)
+    "pC-only",        # E5: prompt stripped to p(C) + h_SAM only
+    "Scrambled-Gamma", # E6: scrambled semantic labels (priming control)
 ]
 
 # LLM-textual conditions (require LLM calls)
 LLM_CONDITIONS = {"Full-Gamma", "No-H", "No-E", "No-N",
-                  "Random-Gamma", "Collapse-NC", "ReAct"}
+                  "Random-Gamma", "Collapse-NC", "ReAct",
+                  "pC-only", "Scrambled-Gamma"}
 
 # Numerical-only conditions (run once per seed, no provider duplication)
 NUMERICAL_CONDITIONS = {"Drive-only", "HRRL"}
@@ -339,6 +342,12 @@ async def run_episode(
             # LLM-textual mode
             if condition == "ReAct":
                 system_prompt, user_prompt = render_react(t + 1, history)
+            elif condition == "pC-only":
+                system_prompt, user_prompt = render_pc_only(p_C, h_sam, t + 1, history)
+            elif condition == "Scrambled-Gamma":
+                system_prompt, user_prompt = get_scrambled_prompt(
+                    x.tolist(), p_C, h_sam, t + 1, history
+                )
             else:
                 system_prompt, user_prompt = render_full_gamma(
                     x.tolist(), p_C, h_sam, t + 1, history
