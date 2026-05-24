@@ -1,6 +1,6 @@
-﻿# The Pro-Action Operator Γ — ICML 2025 Supplementary Material
+﻿# The Pro-Action Operator Γ — ICML 2026 Latinx in AI Workshop Supplementary Material
 
-<video src="assets/proaction_operator_demo.mp4" width="720" controls></video>
+![Pro-Action operator animation](assets/proaction_operator_demo.gif)
 
 This repository contains the anonymous supplementary material for:
 
